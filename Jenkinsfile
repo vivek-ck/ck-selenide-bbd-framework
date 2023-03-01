@@ -18,7 +18,7 @@ pipeline {
                 PATH = "$MAVEN_HOME/bin:$PATH"
             }
             steps {
-                sh 'mvn clean install'
+                sh 'mvn clean compile -e'
             }
         }
     }
