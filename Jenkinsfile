@@ -1,20 +1,24 @@
 pipeline {
     agent any
-
+    
+    tools {
+        maven 'Maven' // configure a Maven tool named "Maven" in Jenkins
+    }
+    
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
         stage('Build') {
-            steps {
-                sh 'mvn clean compile -e'
+            environment {
+                MAVEN_HOME = tool 'Maven'
+                PATH = "$MAVEN_HOME/bin:$PATH"
             }
-        }
-        stage('Test') {
             steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+                sh 'mvn clean install'
             }
         }
     }
