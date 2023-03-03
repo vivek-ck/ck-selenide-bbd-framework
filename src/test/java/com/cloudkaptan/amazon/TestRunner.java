@@ -25,7 +25,7 @@ public class TestRunner extends AbstractTestNGCucumberTests {
 
     @BeforeClass
     public void setUp() {
-        Configuration.remote = "4444";
+        Configuration.remote = "http://localhost:4444/";
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setBrowserName("chrome");
         capabilities.setVersion("110.0");
