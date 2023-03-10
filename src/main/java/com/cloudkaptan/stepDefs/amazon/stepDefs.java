@@ -4,8 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
+import static com.cloudkaptan.webPages.Amazon.PageManager.*;
 import static com.codeborne.selenide.Selenide.*;
-import static com.cloudkaptan.PageManager.*;
 
 
 public class stepDefs {

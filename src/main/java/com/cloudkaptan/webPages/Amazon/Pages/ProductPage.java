@@ -1,4 +1,4 @@
-package com.cloudkaptan.webPages.Amazon;
+package com.cloudkaptan.webPages.Amazon.Pages;
 
 import org.openqa.selenium.support.FindBy;
 

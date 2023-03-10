@@ -1,14 +1,7 @@
-package com.cloudkaptan.webPages.Amazon;
-
-import com.cloudkaptan.base.BasePage;
-import com.codeborne.selenide.SelenideElement;
+package com.cloudkaptan.webPages.Amazon.Pages;
 
 import static com.codeborne.selenide.Selenide.*;
 
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.FindBy;
 
 public class SearchResultPage extends AmazonBasePage{
 

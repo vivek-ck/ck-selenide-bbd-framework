@@ -1,12 +1,12 @@
-package com.cloudkaptan;
-
-import com.cloudkaptan.webPages.Amazon.AmazonBasePage;
-import com.cloudkaptan.webPages.Amazon.CartPage;
-import com.cloudkaptan.webPages.Amazon.HomePage;
-import com.cloudkaptan.webPages.Amazon.ProductPage;
-import com.cloudkaptan.webPages.Amazon.SearchResultPage;
+package com.cloudkaptan.webPages.Amazon;
 
 import static com.codeborne.selenide.Selenide.*;
+
+import com.cloudkaptan.webPages.Amazon.Pages.AmazonBasePage;
+import com.cloudkaptan.webPages.Amazon.Pages.CartPage;
+import com.cloudkaptan.webPages.Amazon.Pages.HomePage;
+import com.cloudkaptan.webPages.Amazon.Pages.ProductPage;
+import com.cloudkaptan.webPages.Amazon.Pages.SearchResultPage;
 
 public class PageManager {
 

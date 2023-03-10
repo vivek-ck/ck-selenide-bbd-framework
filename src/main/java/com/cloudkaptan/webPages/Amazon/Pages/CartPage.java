@@ -1,4 +1,4 @@
-package com.cloudkaptan.webPages.Amazon;
+package com.cloudkaptan.webPages.Amazon.Pages;
 
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.support.FindBy;
