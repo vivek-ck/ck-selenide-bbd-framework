@@ -1,8 +1,10 @@
 package com.cloudkaptan.webPages.SalesForce.Pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.FindBy;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.*;
@@ -53,17 +55,19 @@ public class LeadsPage extends SalesForceBasePage {
 
     public LeadsPage createLoan(String salutationString, String lastNameString, String companyNameString, String addressString) {
         salutationDropbox.click();
-        $x(String.format(salutationValues, salutationString)).click();
+        $x(String.format(salutationValues, salutationString)).should(Condition.appear, Duration.ofSeconds(2)).click();
         lastName.setValue(lastNameString);
         companyName.setValue(companyNameString);
-        searchAddressText.setValue(addressString);
-        $x(String.format(addressSearchValue, addressString)).click();
+        // searchAddressText.setValue(addressString);
+        // $x(String.format(addressSearchValue, addressString)).click();
         saveLoanButton.click();
         return page(this.getClass());
     }
 
     public LeadsPage validateLeads(String lastNameString) {
         leadSearchBox.setValue(lastNameString);
+        leadSearchBox.sendKeys(Keys.ENTER);
+        Selenide.sleep(2000);
         $x(leadSearchResults).shouldBe(Condition.visible, Duration.ofSeconds(5));
         return page(this.getClass());
     }

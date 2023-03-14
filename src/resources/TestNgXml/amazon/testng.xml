@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!-- mvn test -Dsurefire.suiteXmlFiles=src/resources/TestNgXml/amazon/testng.xml -->
 <suite name="com.runner">
-    <test name="TestRunner" thread-count="1">
+    <test name="TestRunner" thread-count="4">
         <parameter name="browser" value="chrome"/>
         <classes>
             <class name="com.cloudkaptan.amazon.TestRunner"/>
