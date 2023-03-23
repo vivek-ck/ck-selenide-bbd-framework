@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="com.salesforce.test">
     <!-- mvn test -Dsurefire.suiteXmlFiles=src/resources/TestNgXml/salesForce/testng.xml -->
-    <test name="TestRunner" thread-count="4">
+    <test name="TestRunner" thread-count="2">
         <parameter name="browser" value="chrome"/>
         <classes>
             <class name="com.cloudkaptan.salesForce.TestRunner"/>

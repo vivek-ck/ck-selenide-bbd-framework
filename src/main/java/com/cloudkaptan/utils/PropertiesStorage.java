@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-import org.testng.annotations.Test;
-
 public class PropertiesStorage {
     private static String persistentDataLocation = "src/resources/PersistentDataFiles/";
     private static String settingDataLocation = "src/resources/Settings/";
