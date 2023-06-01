@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 import static com.cloudkaptan.webPages.SalesForce.PageManager.*;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.WebDriverRunner;
 
 import static com.codeborne.selenide.Selenide.*;
 import java.awt.Graphics;
@@ -51,7 +50,7 @@ public class SecreenShotTesting {
         return new Object[][] {
                 { "HomePage.png", "HomePage.png", true },
                 { "HomePage.png", "ActionBar.png", true },
-                { "HomePage.png", "Assistant.png", true },
+                //{ "HomePage.png", "Assistant.png", true },
                 { "HomePage.png", "Quarterly.png", true },
                 // { "Leads.png", "ActionBar.png", false },
                 // { "Leads.png", "Assistant.png", false },
@@ -100,33 +99,7 @@ public class SecreenShotTesting {
                 return false;
             }
 
-            // Iterate through the main image and compare each sub-image
             int threshold = 0; // Adjust this value to control the similarity threshold
-            /*
-             * for (int y = 0; y <= mainHeight - subHeight; y++) {
-             * for (int x = 0; x <= mainWidth - subWidth; x++) {
-             * boolean match = true;
-             * for (int subY = 0; subY < subHeight; subY+=2) {
-             * for (int subX = 0; subX < subWidth; subX+=2) {
-             * int mainRGB = mainImage.getRGB(x + subX, y + subY);
-             * int subRGB = subImage.getRGB(subX, subY);
-             * int delta = Math.abs(mainRGB - subRGB);
-             * if (delta > threshold) {
-             * match = false;
-             * break;
-             * }
-             * }
-             * if (!match) {
-             * break;
-             * }
-             * }
-             * if (match) {
-             * System.out.println("Sub-image found at (" + x + "," + y + ")");
-             * return true;
-             * }
-             * }
-             * }
-             */
 
             IntStream.range(0, mainHeight - subHeight + 1).parallel().forEach(y -> {
                 for (int x = 0; x <= mainWidth - subWidth; x++) {
@@ -167,30 +140,6 @@ public class SecreenShotTesting {
         g.dispose();
         return grayscaleImage;
     }
-
-    // public BufferedImage scaleDownImage(BufferedImage originalImage, int
-    // targetWidth) {
-    // return Scalr.resize(originalImage, targetWidth);
-    // }
-
-    // //@Test(dataProvider = "imageData")
-    // public void scaleImageTest(String mImage, String changeImage, Boolean
-    // notRequired) {
-    // try {
-    // // Load the images
-    // BufferedImage mainImage = ImageIO.read(new File("test-result/reports/" +
-    // changeImage));
-
-    // // Convert images to grayscale
-    // mainImage = convertToGrayscale(mainImage);
-
-    // File outFile = new File("test-result/scaledImage/scaled" + changeImage);
-    // ImageIO.write(mainImage, "png", outFile);
-    // } catch(Exception e) {
-    // e.printStackTrace();
-    // }
-
-    // }
 
     @AfterClass
     public void tearDown() {

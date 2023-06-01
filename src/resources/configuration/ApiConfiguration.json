@@ -1,0 +1,8 @@
+{
+    "testRail": {
+        "baseUrl": "https://cloudkaptanmain.testrail.io",
+        "port": "",
+        "userName": "vivek.biswas@cloudkaptan.com",
+        "token": "tKwBgLXAw1BIib2SLi07-qO06M7I34MCcJv7DctKx"
+    }
+}

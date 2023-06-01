@@ -29,7 +29,7 @@ public class stepDefs {
     @Then("^the user creates new lead with Salutation \"(.*)\", LastName \"(.*)\", Company \"(.*)\", and Address \"(.*)\"$")
     public void createLead(String salutation, String lastName, String company, String address)
             throws ClassNotFoundException, IOException, ParseException {
-        leadsPage().initiateLead().createLoan(salutation, lastName, company, address);
+        leadsPage().initiateLead().createLead(salutation, lastName, company, address);
     }
 
     @Then("the Lead with name {string} should be present in the Leads list")

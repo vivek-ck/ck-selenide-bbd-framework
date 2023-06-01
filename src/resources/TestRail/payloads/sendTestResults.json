@@ -1,0 +1,7 @@
+{
+    "status_id": 1,
+    "comment": "This test passed successfully",
+    "elapsed": "1.0s",
+    "version": "1.0",
+    "custom_testrail_field": "custom_value"
+}

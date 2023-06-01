@@ -53,7 +53,7 @@ public class LeadsPage extends SalesForceBasePage {
         return page(this.getClass());
     }
 
-    public LeadsPage createLoan(String salutationString, String lastNameString, String companyNameString, String addressString) {
+    public LeadsPage createLead(String salutationString, String lastNameString, String companyNameString, String addressString) {
         salutationDropbox.click();
         $x(String.format(salutationValues, salutationString)).should(Condition.appear, Duration.ofSeconds(2)).click();
         lastName.setValue(lastNameString);
