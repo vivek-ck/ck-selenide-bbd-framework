@@ -1,4 +1,4 @@
-import Page from "./_Page.js";
+import Page from "./_page.js";
 
 class LoginPage extends Page {
 
