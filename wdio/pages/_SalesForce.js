@@ -10,18 +10,8 @@ export default class SalesForce extends Page{
     //Common methods
     async goTo(tabWithText) {
         var tab = await $(`//a[@title='${tabWithText}']`);
-        
-        await browser.waitUntil(
-            async () => await tab.isDisplayed() === true,
-            {
-                timeout: 10000,
-                timeoutMsg: `${tab} is not displayed.`
-            }
-        );
-
-        await browser.execute(async (el) => {
-            await el.click();
-        },tab);
+        await this.jsClick(tab);
+        await browser.pause(1000);
     };
 
     async dropDownLazySelect(element) {

@@ -1,4 +1,4 @@
-import SalesForce from "./_salesforce.js";
+import SalesForce from "./_salesForce.js";
 
 class HomePage extends SalesForce {
 

@@ -9,16 +9,11 @@ export default class Page {
      */
     async jsClick(element) {
         var clickElement = await element;
-        await browser.waitUntil(
-            async () => await clickElement.isDisplayed() === true,
-            {
-                timeout: 10000,
-                timeoutMsg: `${clickElement} is not displayed.`
-            }
-        );
+        await clickElement.waitForExist({ timeout: 15000, timeoutMsg: `${clickElement} didn't exist after 15 seconds.` });
 
         await browser.execute(async (el) => {
             await el.click();
-          }, await clickElement);
+        }, await clickElement);
     }
+      
 }

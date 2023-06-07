@@ -13,6 +13,7 @@ describe("application_creation_v2", () => {
         const firstName = faker.person.firstName();
         const lastName = faker.person.lastName();
         const email = faker.internet.email();
+        const fullName = `${firstName} ${lastName}`
 
         await login.open();
         await login.login();
@@ -22,12 +23,12 @@ describe("application_creation_v2", () => {
         await leads.createNewLead({firstName: firstName, lastName: lastName, email: email});
         await leads.changeLeadStatus('Converted');
         await leads.convertLead();
-        await leads.goToCreatedAccount(firstName, lastName);
+        await leads.goToCreatedAccount(fullName);
 
-        await accounts.editBirthDate('01/01/1999');
+        await browser.pause(2000);
+        await accounts.editBirthDate('01/01/2000');
         await accounts.goTo('Opportunities');
-
-        await opportunities.openOpportunityWithName('Penelope Feeney');
+        await opportunities.openOpportunityWithName(fullName);
         await opportunities.modifyNecessaryDetails();
         await opportunities.createApplication();
         console.log('100');

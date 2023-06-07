@@ -1,4 +1,4 @@
-import SalesForce from "./_salesforce.js";
+import SalesForce from "./_salesForce.js";
 
 class Account extends SalesForce {
 
@@ -24,6 +24,7 @@ class Account extends SalesForce {
         await this.birthdateField.setValue(date);
         await this.dropDownLazySelect(this.ageRangeDropdown);
         await this.jsClick(this.saveEditButton);
+        await browser.pause(4000);
     }
 }
 

@@ -1,4 +1,4 @@
-import SalesForce from "./_salesforce.js";
+import SalesForce from "./_salesForce.js";
 
 class LeadsPage extends SalesForce {
     get createLeadButton() { return $("//a/div[@title='New']") }
@@ -28,8 +28,8 @@ class LeadsPage extends SalesForce {
     getSalutationOption(salutation) { return $(`//span[@title='${salutation}']/ancestor::lightning-base-combobox-item`) }
     getGenderOption(gender) { return $(`//span[@title='${gender}']/ancestor::lightning-base-combobox-item`) }
     getStateOption(state) { return $(`//span[@title='${state}']/ancestor::lightning-base-combobox-item`) }
-    getPersonAccountLink(firstName, lastName) { return $(`//a[contains(text(), '${firstName} ${lastName}')]`) }
-    getPersonOpportunityLink(firstName, lastName) { return $(`//a[contains(text(), '${firstName} ${lastName}-')]`) }
+    getPersonAccountLink(fullName) { return $(`//a[contains(text(), '${fullName}')]`) }
+    getPersonOpportunityLink(fullName) { return $(`//a[contains(text(), '${fullName}-')]`) }
 
 
     async createNewLead({ firstName, lastName, email, salutation = 'Mr.', gender = 'Male', mobile = '478456345', state = 'New South Wales' }) {
@@ -87,9 +87,9 @@ class LeadsPage extends SalesForce {
         await this.convertLeadPopupConvertButton.click();
     }
 
-    async goToCreatedAccount(firstName, lastName) {
+    async goToCreatedAccount(fullName) {
         await this.getElementContainingExactText('Your lead has been converted').waitForDisplayed({ timeout: 40000, timeoutMsg: "Element with text: 'Your lead has been converted' was not found after 40 seconds." });
-        await this.getPersonAccountLink(firstName, lastName).click();
+        await this.getPersonAccountLink(fullName).click();
     }
 }
 
