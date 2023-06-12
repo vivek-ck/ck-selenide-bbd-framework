@@ -19,19 +19,32 @@ class Opportunities extends SalesForce {
     get markAsCurrentStageButton() { return $("//span[contains(text(), 'Mark as Current Stage')]") }
     get createApplicationButton() { return $("//button[text() = 'Create Application']//ancestor::li") }
 
-    getOppuortunitiesStageButton(leadStatus) { return $(`//span[text() = '${leadStatus}']`) }
+    applicationsCountText(count = 1) { return $(`//span[text() = 'Applications']/following-sibling::span[text() = '(${count})']`) }
+    applicationsListLink(linkIndex = 1) { return $(`(//h3/descendant::a/descendant::span[contains(text(), 'APP-')])[${linkIndex}]`) }
+    oppuortunitiesStageButton(leadStatus) { return $(`//span[text() = '${leadStatus}']`) }
+
+
+    //iframe: accessibility title
+    get ellipsisMenuButton() { return $("//div[@class = 'sk-navigation sk-navigation-dropdown sk-dropnav']") }
+    get loanPurposeSearchButton() { return $("//div[text() = 'Loan Purpose']/parent::div/following-sibling::div/div") }
+    get selectPurposeSearchField() { return $("//input[@placeholder = 'Search CL Purposes']") }
+
+    ellipsisMenuItemWithText(text) { return $(`//div[@class = 'sk-dropnav-dropdown-item']//span[text() = '${text}']`) }       //Tripple vertical dots
+    purposeSearchResultText(searchValue) { return $(`//div[contains(text() ,'${searchValue}')]/ancestor::td/preceding-sibling::td`) }       //chain icon for the search result
+
+
 
 
 
 
     async searchOpportunity(name) {
-        await this.opportunitiesSearchField.setValue(name + '\n');
+        await this.opportunitiesSearchField.setValue(`${name}\n`);
     }
 
     async openOpportunityWithName(name) {
         await this.searchOpportunity(name);
         await browser.pause(2000);
-        await this.getElementContainingExactText(name + '-', 'a').click();
+        await this.getElementContainingExactText(`${name}-`, 'a').click();
     }
 
     async modifyNecessaryDetails(amount = '80000', termDuration = '12') {
@@ -66,7 +79,7 @@ class Opportunities extends SalesForce {
 
     async setOppuortunityStatus(oppStatus) {
         await browser.pause(4000);
-        await this.jsClick(this.getOppuortunitiesStageButton(oppStatus));
+        await this.jsClick(this.oppuortunitiesStageButton(oppStatus));
         await browser.pause(2000);
         switch (oppStatus) {
             case 'New':
@@ -81,9 +94,32 @@ class Opportunities extends SalesForce {
     }
 
     async createApplication() {
-        await this.setOppuortunityStatus("Preparing application");
+        // await this.setOppuortunityStatus("Preparing application");
+        // await browser.pause(1000);
+        // await this.createApplicationButton.click()
+        await this.waitForPageLoad();
+        await browser.pause(5000);
+        await browser.keys(Key.End);
+        await this.applicationsCountText(2).waitForExist();
+    }
+
+    async openApplication(applicationIndex = 1) {
+        // Probably not needed as we are using jsClick
+        // await this.applicationsListLink(applicationIndex).scrollIntoView({block:'center'});
+        // await browser.pause(1000);
+        let applicationId = await this.applicationsListLink(applicationIndex).getText();
+        await this.jsClick(await this.applicationsListLink(applicationIndex));
         await browser.pause(1000);
-        await this.createApplicationButton.click()
+        await this.waitForPageLoad();
+        await (await this.getIframeWithAttribute('title', "accessibility title")).waitForExist();
+        let iframe = await this.getIframeWithAttribute('title', "accessibility title");
+        await browser.switchToFrame(iframe);
+        await this.reloadIfElementNotPresent(await this.getElementContainingExactText(applicationId, 'div'));
+    }
+
+    async createAndOpenApplication() {
+        await this.createApplication();
+        await this.openApplication(2);
     }
 }
 
