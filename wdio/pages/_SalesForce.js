@@ -16,15 +16,23 @@ export default class SalesForce extends Page{
     //Common methods
     async goTo(tabWithText) {
         await this.waitForPageLoad();
-        var tab = await $(`//a[@title='${tabWithText}']`);
-        await this.jsClick(tab);
+        await (await $(`//a[@title='${tabWithText}']`)).waitForExist();
+        await this.jsClick(await $(`//a[@title='${tabWithText}']`));
         await browser.pause(1000);
     };
 
     async dropDownLazySelect(element) {
-        this.jsClick(await element);
+        await this.jsClick(await element);
         await browser.pause(500);
         await browser.keys([Key.ArrowDown]);
         await browser.keys([Key.Enter]);
+    }
+
+    async dropDownSelectByText(dropDownElement, optionText) {
+        await this.jsClick(await dropDownElement);
+        await browser.pause(500);
+        
+        let dropDownOption = await $(`//lightning-base-combobox-item//span[@title = '${optionText}']`);
+        await dropDownOption.click();
     }
 }

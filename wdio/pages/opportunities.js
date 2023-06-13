@@ -23,20 +23,6 @@ class Opportunities extends SalesForce {
     applicationsListLink(linkIndex = 1) { return $(`(//h3/descendant::a/descendant::span[contains(text(), 'APP-')])[${linkIndex}]`) }
     oppuortunitiesStageButton(leadStatus) { return $(`//span[text() = '${leadStatus}']`) }
 
-
-    //iframe: accessibility title
-    get ellipsisMenuButton() { return $("//div[@class = 'sk-navigation sk-navigation-dropdown sk-dropnav']") }
-    get loanPurposeSearchButton() { return $("//div[text() = 'Loan Purpose']/parent::div/following-sibling::div/div") }
-    get selectPurposeSearchField() { return $("//input[@placeholder = 'Search CL Purposes']") }
-
-    ellipsisMenuItemWithText(text) { return $(`//div[@class = 'sk-dropnav-dropdown-item']//span[text() = '${text}']`) }       //Tripple vertical dots
-    purposeSearchResultText(searchValue) { return $(`//div[contains(text() ,'${searchValue}')]/ancestor::td/preceding-sibling::td`) }       //chain icon for the search result
-
-
-
-
-
-
     async searchOpportunity(name) {
         await this.opportunitiesSearchField.setValue(`${name}\n`);
     }
@@ -51,7 +37,6 @@ class Opportunities extends SalesForce {
         await browser.pause(4000);
         //Without refresh Details Tab could have multiple entries with the same xpath.
         await browser.refresh();
-        await browser.pause(2000);
         await this.detailsTabButton.click();
         await this.getElementContainingPartialText('Please make sure the mandatory fields are filled up', 'span').waitForExist({ timeout: 10000 });
 
@@ -66,7 +51,7 @@ class Opportunities extends SalesForce {
         await browser.keys([Key.ArrowDown]);
         await browser.keys([Key.Enter]);
 
-        await this.dropDownLazySelect(this.loanTypeDropdown);
+        await this.dropDownSelectByText(this.loanTypeDropdown, 'Business Equipment Loan');
         await this.dropDownLazySelect(this.residentialLoanTypeDropdown);
         await this.dropDownLazySelect(this.assetTypeDropdown);
         await this.dropDownLazySelect(this.clientTypeDropdown);

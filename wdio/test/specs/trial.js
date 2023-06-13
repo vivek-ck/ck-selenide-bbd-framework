@@ -6,6 +6,7 @@ import Leads from "../../pages/leads.js";
 import Login from "../../pages/login.js";
 import Accounts from '../../pages/accounts.js';
 import Opportunities from '../../pages/opportunities.js';
+import Applications from '../../pages/applications.js';
 
 describe("application_creation_v2", () => {
     it("tests application_creation_v2", async () => {
@@ -32,9 +33,9 @@ describe("application_creation_v2", () => {
         // await Opportunities.modifyNecessaryDetails();
         // await Opportunities.createApplication();
         
-        await Home.goTo('Opportunities');
-        await Opportunities.openOpportunityWithName('Ellis Fritsch');
-        await Opportunities.createAndOpenApplication();
+        await Home.goTo('Applications');
+        await Applications.openApplicationWithId('APP-0000001407');
+        await Applications.addNewCollateral();
         console.log('100');
     })
 })
