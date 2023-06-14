@@ -35,7 +35,7 @@ describe("application_creation_v2", () => {
         
         await Home.goTo('Applications');
         await Applications.openApplicationWithId('APP-0000001407');
-        await Applications.addNewCollateral();
+        await Applications.addParties('Dawson Daugherty');
         console.log('100');
     })
 })
