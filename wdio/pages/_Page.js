@@ -1,4 +1,18 @@
 export default class Page {
+
+    /**
+     * Use this method if the WebdriverIO click is not working
+     * @param {*} element the web element that needs to be clicked, should be defined by $('xpath')
+     */
+    async scrollToView(element) {
+        var Element = await element;
+        await Element.waitForExist({ timeout: 15000, timeoutMsg: `${element} didn't exist after 15 seconds.` });
+
+        await browser.execute(async (el) => {
+            await el.scrollIntoView();
+        }, await Element);
+    }
+
     /**
      * Use this method if the WebdriverIO click is not working
      * @param {*} element the web element that needs to be clicked, should be defined by $('xpath')

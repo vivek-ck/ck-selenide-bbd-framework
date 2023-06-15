@@ -68,7 +68,7 @@ class LeadsPage extends SalesForce {
     async changeLeadStatus(leadStatus) {
         await browser.pause(4000);
         await this.jsClick(this.getleadStatusButton(leadStatus));
-        await browser.pause(2000);
+        await browser.pause(4000);
         switch (leadStatus) {
             case 'New':
                 await this.jsClick(this.markStatusAsCompleteButton);

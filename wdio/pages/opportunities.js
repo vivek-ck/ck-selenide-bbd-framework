@@ -4,16 +4,15 @@ import { Key } from "webdriverio";
 class Opportunities extends SalesForce {
     get opportunitiesSearchField() { return $("//input[@aria-label='Search Recently Viewed list view.']") }
     get detailsTabButton() { return $("//a[contains(text(), 'Details')]") }
-    get relationshipAssociateDropdown() { return $("//label[contains(text(), 'Relationship Associate')]/following-sibling::div/div") }
-    get loanTypeDropdown() { return $("//button[@aria-label='Loan Type, --None--']") }
-    get residentialLoanTypeDropdown() { return $("//button[@aria-label='Loan Type, Residential']") }
-    get assetTypeDropdown() { return $("//button[@aria-label='Asset Type, --None--']") }
+    get relationshipAssociateDropdown() { return $("//label[contains(text(), 'Relationship Associate')]/following-sibling::div//input") }
+    get loanTypeDropdown() { return $("//button[contains(@aria-label, 'Loan Type')]") }
+    get assetTypeDropdown() { return $("//button[contains(@aria-label, 'Asset Type')]") }
     get amountField() { return $("//input[@name='Amount']") }
     get termField() { return $("//input[@name='Term__c']") }
-    get clientTypeDropdown() { return $("//button[@aria-label='Client Type, --None--']") }
-    get transactionTypeDropdown() { return $("//button[@aria-label='Transaction Type, --None--']") }
-    get loanUseDropdown() { return $("//button[@aria-label='Loan Use, --None--']") }
-    get lenderDropdown() { return $("//button[@aria-label='Lender, --None--']") }
+    get clientTypeDropdown() { return $("//button[contains(@aria-label, 'Client Type')]") }
+    get transactionTypeDropdown() { return $("//button[contains(@aria-label, 'Transaction Type')]") }
+    get loanUseDropdown() { return $("//button[contains(@aria-label, 'Loan Use')]") }
+    get lenderDropdown() { return $("//button[contains(@aria-label, 'Lender')]") }
     get saveEditButton() { return $("//button[text()='Save']") }
     get editLoanTypeButton() { return $("//button[@title='Edit Loan Type']") }
     get markAsCurrentStageButton() { return $("//span[contains(text(), 'Mark as Current Stage')]") }
@@ -28,9 +27,11 @@ class Opportunities extends SalesForce {
     }
 
     async openOpportunityWithName(name) {
-        await this.searchOpportunity(name);
         await browser.pause(2000);
+        await this.searchOpportunity(name);
+        await this.getElementContainingExactText(`${name}-`, 'a').waitForDisplayed();
         await this.getElementContainingExactText(`${name}-`, 'a').click();
+        await this.getElementContainingExactText(`${name}-`, 'lightning-formatted-text').waitForDisplayed();
     }
 
     async modifyNecessaryDetails(amount = '80000', termDuration = '12') {
@@ -38,21 +39,23 @@ class Opportunities extends SalesForce {
         //Without refresh Details Tab could have multiple entries with the same xpath.
         await browser.refresh();
         await this.detailsTabButton.click();
-        await this.getElementContainingPartialText('Please make sure the mandatory fields are filled up', 'span').waitForExist({ timeout: 10000 });
+        await this.getElementContainingPartialText('Please make sure the mandatory fields are filled up', 'span').waitForExist();
 
         await this.jsClick(this.editLoanTypeButton);
         await this.saveEditButton.waitForExist({ timeout: 20000 });
 
         await this.amountField.setValue(amount);
-        await this.termField.setValue(termDuration)
+        await this.termField.setValue(termDuration);
 
+        //await (await this.getElementContainingExactText('Relationship Associate', 'label')).scrollIntoView({block: 'nearest'});
+        await (await this.relationshipAssociateDropdown).waitForClickable();
         await this.relationshipAssociateDropdown.click();
-        await browser.pause(1000);
-        await browser.keys([Key.ArrowDown]);
-        await browser.keys([Key.Enter]);
+        await this.relationshipAssociateDropdown.setValue("Niladri Acharya - RA");
+
+        await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text').waitForDisplayed();
+        await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text').click();
 
         await this.dropDownSelectByText(this.loanTypeDropdown, 'Business Equipment Loan');
-        await this.dropDownLazySelect(this.residentialLoanTypeDropdown);
         await this.dropDownLazySelect(this.assetTypeDropdown);
         await this.dropDownLazySelect(this.clientTypeDropdown);
         await this.dropDownLazySelect(this.transactionTypeDropdown);
@@ -79,20 +82,18 @@ class Opportunities extends SalesForce {
     }
 
     async createApplication() {
-        // await this.setOppuortunityStatus("Preparing application");
-        // await browser.pause(1000);
-        // await this.createApplicationButton.click()
+        await this.setOppuortunityStatus("Preparing application");
+        await browser.pause(1000);
+        await this.createApplicationButton.click()
         await this.waitForPageLoad();
-        await browser.pause(5000);
+        await browser.pause(4000);
         await browser.keys(Key.End);
         await this.applicationsCountText(2).waitForExist();
     }
 
     async openApplication(applicationIndex = 1) {
-        // Probably not needed as we are using jsClick
-        // await this.applicationsListLink(applicationIndex).scrollIntoView({block:'center'});
-        // await browser.pause(1000);
         let applicationId = await this.applicationsListLink(applicationIndex).getText();
+        this.dataStore.setData('applicationId', await applicationId);
         await this.jsClick(await this.applicationsListLink(applicationIndex));
         await browser.pause(1000);
         await this.waitForPageLoad();

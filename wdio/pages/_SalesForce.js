@@ -1,7 +1,11 @@
+import DataStore from "../utils/datastore.js";
 import Page from "./_page.js";
 import { Key } from "webdriverio";
 
 export default class SalesForce extends Page{
+
+    //DataStorage initialization
+    dataStore = DataStore;
 
     //Common Selectors for text
     getElementContainingExactText(text, tagName = '*') { return $(`//${tagName}[text() = '${text}']`) }
@@ -23,9 +27,10 @@ export default class SalesForce extends Page{
 
     async dropDownLazySelect(element) {
         await this.jsClick(await element);
-        await browser.pause(500);
+        await browser.pause(700);
         await browser.keys([Key.ArrowDown]);
         await browser.keys([Key.Enter]);
+        await browser.pause(700);
     }
 
     async dropDownSelectByText(dropDownElement, optionText) {
