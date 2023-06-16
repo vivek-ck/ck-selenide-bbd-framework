@@ -60,7 +60,7 @@ export default class Page {
         }
     }
 
-    async #forceReload() {
+    async forceReload() {
         await browser.execute(
             async () => await window.location.reload(true)
         );
@@ -83,7 +83,7 @@ export default class Page {
             }
 
             console.log(`---------------Refreshing Page---------------`);
-            await this.#forceReload(timeoutSec);
+            await this.forceReload(timeoutSec);
 
             tries++;
         }

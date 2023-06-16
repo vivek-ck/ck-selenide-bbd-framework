@@ -23,22 +23,23 @@ describe("application_creation_v2", () => {
         // await Home.goTo('Leads');
 
         // await Leads.createNewLead({firstName: firstName, lastName: lastName, email: email});
-        // await Leads.changeLeadStatus('Converted');
-        // await Leads.convertLead();
-        // await Leads.goToCreatedAccount(fullName);
+        // // await Leads.changeLeadStatus('Converted');
+        // // await Leads.convertLead();
+        // // await Leads.goToCreatedAccount(fullName);
 
         // await browser.pause(4000);
         // await Accounts.editBirthDate('01/01/2000');
-        await Accounts.goTo('Opportunities');
-        await Opportunities.openOpportunityWithName('Vivianne Fay');
-        await Opportunities.modifyNecessaryDetails();
-        await Opportunities.createAndOpenApplication();
+        // await Accounts.goTo('Opportunities');
+        // await Opportunities.openOpportunityWithName(fullName);
+        // await Opportunities.modifyNecessaryDetails();
+        // await Opportunities.createAndOpenApplication();
         
         await Home.goTo('Applications');
-        await Applications.openApplicationWithId(await DataStore.getData('applicationId'));
+        let applicationId = 'APP-0000001429'; //await DataStore.getData('applicationId')
+        await Applications.openApplicationWithId(applicationId);
         await Applications.editLoan();
         await Applications.addNewCollateral();
-        await Applications.addParties('Vivianne Fay');
+        await Applications.addParties(fullName);
         console.log('100');
     })
 })

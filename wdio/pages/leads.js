@@ -31,8 +31,20 @@ class LeadsPage extends SalesForce {
     getPersonAccountLink(fullName) { return $(`//a[contains(text(), '${fullName}')]`) }
     getPersonOpportunityLink(fullName) { return $(`//a[contains(text(), '${fullName}-')]`) }
 
+    async getRandomInt(max = 10) {
+        return await Math.floor(Math.random() * max);
+    }
 
-    async createNewLead({ firstName, lastName, email, salutation = 'Mr.', gender = 'Male', mobile = '478456345', state = 'New South Wales' }) {
+    async createNewLead({ firstName, lastName, email, salutation = 'Mr.', gender = 'Male', mobile = '', state = 'New South Wales' }) {
+        let rndMobile = mobile;
+        if(rndMobile === '') {
+            let num = [4];
+            for(let i = 1; i <= 8; ++i) {
+                num.push(await this.getRandomInt());
+            }
+            rndMobile = num.join('');
+        }
+
         await this.createLeadButton.click();
 
         await this.salutationDropown.click();
@@ -44,7 +56,7 @@ class LeadsPage extends SalesForce {
         await this.jsClick(this.genderDropdown);
         await this.getGenderOption(gender).click();
 
-        await this.mobilePhoneField.setValue(mobile);
+        await this.mobilePhoneField.setValue(await rndMobile);
         await this.emailField.setValue(email);
 
         await this.dropDownLazySelect(this.borrowingInterestDropdown);

@@ -7,7 +7,7 @@ class Application extends SalesForce {
     get repaymentTypeButton() { return $("//div[text() = 'Repayment Type']/../following-sibling::div") }
     get repaymentFrequencyDropdown() { return $("//div[text() = 'Repayment Frequency']/../following-sibling::div/select") }
     get rateTypeDropdown() { return $("//div[text() = 'Rate Type']/../following-sibling::div/select") }
-    get generatePricing() { return $("//span[text() = 'Generate Pricing']") }
+    get generatePricing() { return $("//span[text() = 'Generate Pricing']/parent::div") }
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
 
     //iframe[@id ='party-iframe'] {child of "accessibility title"}
@@ -26,7 +26,7 @@ class Application extends SalesForce {
      * @param searchValue The text used to search for the loan purpose option.
      * @return The chain icon element corresponding to the search result.
      */
-    searchResultLink(searchValue) { return $(`//div[contains(text() ,'${searchValue}')]/ancestor::td/preceding-sibling::td`) }
+    searchResultLink(searchValue) { return $(`//div[text() = '${searchValue}']/ancestor::td/preceding-sibling::td`) }
 
     /**
      * Returns the label element associated with the given repayment type text.
@@ -57,7 +57,7 @@ class Application extends SalesForce {
     collateralInfoField(fieldName) { return $(`//div[text() = '${fieldName}']/parent::div/following-sibling::div//input`) }
 
     async searchApplicationWithId(applicationId) {
-        await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}`);
+        await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}\n`);
     }
 
     async goToApplicationTabWithText(tabName) {
@@ -88,24 +88,26 @@ class Application extends SalesForce {
     }
 
     async selectBorrowerRating(ratingText) {
-        await this.jsClick(searchButton(searchButtonType.BORROWER_RATING));
-        await this.searchResultLink(ratingText).waitForDisplayed();
+        await this.jsClick(this.searchButton(searchButtonType.BORROWER_RATING));
+        await (await this.searchResultLink(ratingText)).waitForDisplayed();
+        await browser.pause(1000);
         await this.searchResultLink(ratingText).click();
     }
 
     async selectCollateralType(collateralText) {
         await this.searchButton(searchButtonType.COLLATERAL_TYPE).click();
-        await this.searchResultLink(collateralText).waitForDisplayed();
+
+        await this.searchResultLink(collateralText).waitForClickable();
+        await browser.pause(1000);
         await this.searchResultLink(collateralText).click();
     }
 
     async selectAccount(accountName) {
         await $("//tr[@class = 'nx-item']/td[3]/div/div").click();
-        await this.searchResultLink(accountName).waitForDisplayed();
+        await this.searchResultLink(accountName).waitForClickable();
+        await browser.pause(1000);
         await this.searchResultLink(accountName).click();
     }
-
-    
 
     async editLoan(rateType = 'Fixed', loanPurpose = 'Goodwill', borrowerRating = 'A', repaymentFrequency = 'Monthly', repaymentType = 'IO') {
         await this.loanEditButton.click();
@@ -116,13 +118,22 @@ class Application extends SalesForce {
         await this.repaymentFrequencyDropdown.selectByAttribute('value', repaymentFrequency);
         await this.repaymentTypeButton.click();
         await this.typeOption(repaymentType).click();
-        await this.getElementWithAttribute('class', 'ui-multiselect-close', 'a');
         await this.generatePricing.click();
-        await this.getElementWithAttribute('id', 'pricing-button', 'div').waitForDisplayed({ timeout: 30000 });
-        await this.getElementWithAttribute('id', 'pricingOptionCard', 'div').click();
+        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Saving Application...'));
+
+        let pricingButton = await this.getElementWithAttribute('id', 'pricing-button', 'div');
+        await pricingButton.waitForDisplayed();
+        await pricingButton.click();
+
+        let pricingCard = await this.getElementWithAttribute('id', 'pricingOptionCard', 'div');
+        await pricingCard.waitForExist({timeout: 30000});
+        await pricingCard.click();
+
         await this.getElementContainingExactText('Yes', 'span').click();
         await this.getElementContainingExactText('Pricing option is selected successfully.').waitForDisplayed({ timeout: 30000 });
-        await this.getElementWithAttribute('title', 'Close', 'button').click();
+
+        await this.forceReload();
+        await browser.pause(5000)
     }
 
     async addNewCollateral(securityName = 'Testname', street = 'Test Street', suburb = 'Test Suburb', postal = '888888') {
@@ -212,12 +223,7 @@ class Application extends SalesForce {
 
         //"Moving to final step" loading next page
         await browser.pause(2000);
-        await browser.waitUntil(async () => {
-            const element = await this.getElementContainingExactText('Moving to final step');
-            return !(await element.isDisplayed());
-        }, {
-            timeout: 20000
-        });
+        this.waitUntilElementDisappears(await this.getElementContainingExactText('Moving to final step'));
         
         //Concent
         let electronicConcent = await $("//div[text() = 'Electronic Consent']/parent::div/following-sibling::div/input");
@@ -228,12 +234,7 @@ class Application extends SalesForce {
         await saveButton.click();
 
         //Waiting for Party to be saved
-        await browser.waitUntil(async () => {
-            const element = await this.getElementContainingExactText('Saving Party');
-            return !(await element.isDisplayed());
-        }, {
-            timeout: 20000
-        });
+        this.waitUntilElementDisappears(await this.getElementContainingExactText('Saving Party'));
 
         //Switch to Accessibility Title Iframe
         await browser.switchToParentFrame();
