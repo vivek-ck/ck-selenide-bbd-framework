@@ -117,7 +117,7 @@ class Application extends SalesForce {
         await this.goToApplicationTabWithText('Loan');
         await this.loanEditButton.click();
         await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div').waitForDisplayed();
-        await browser.pause(2000);
+        await browser.pause(4000);
         await this.rateTypeDropdown.selectByAttribute('value', rateType);
         await this.selectLoanPurpose(loanPurpose);
         await this.selectBorrowerRating(borrowerRating);
@@ -167,7 +167,7 @@ class Application extends SalesForce {
         await this.selectAccount(accountOwnerName);
         await this.ownershipPercentage.setValue('100');
         await this.nextButton(4).click();
-        await browser.pause(500);
+        await browser.pause(2000);
 
         await this.getElementContainingExactText('Save', 'span').click();
         await this.waitUntilElementDisappears(await this.getElementContainingExactText('Save', 'span'), 30);
@@ -231,7 +231,7 @@ class Application extends SalesForce {
         await nextStepButton.click();
 
         //"Moving to final step" loading next page
-        await browser.pause(2000);
+        await browser.pause(5000);
         this.waitUntilElementDisappears(await this.getElementContainingExactText('Moving to final step'));
 
         //Concent
