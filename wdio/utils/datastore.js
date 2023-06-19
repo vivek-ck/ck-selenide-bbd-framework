@@ -1,26 +1,31 @@
+import fs from 'fs';
+import path from 'path';
+
 /* 
 Example usage
-const myDataStore = new DataStore();
+```
+    const myDataStore = new DataStore();
 
-myDataStore.setData('name', 'John');
-myDataStore.setData('age', 30);
-myDataStore.setData('city', 'New York');
+    myDataStore.setData('name', 'John');
+    myDataStore.setData('age', 30);
+    myDataStore.setData('city', 'New York');
 
-console.log(myDataStore.getData('name')); // Output: John
+    console.log(myDataStore.getData('name')); // Output: John
 
-console.log(myDataStore.getAllKeys()); // Output: ['name', 'age', 'city']
+    console.log(myDataStore.getAllKeys()); // Output: ['name', 'age', 'city']
 
-console.log(myDataStore.getAllValues()); // Output: ['John', 30, 'New York']
+    console.log(myDataStore.getAllValues()); // Output: ['John', 30, 'New York']
 
-console.log(myDataStore.getSize()); // Output: 3
+    console.log(myDataStore.getSize()); // Output: 3
 
-myDataStore.removeData('age');
+    myDataStore.removeData('age');
 
-console.log(myDataStore.hasData('age')); // Output: false
+    console.log(myDataStore.hasData('age')); // Output: false
 
-myDataStore.clear();
+    myDataStore.clear();
 
-console.log(myDataStore.getSize()); // Output: 0
+    console.log(myDataStore.getSize()); // Output: 0
+```
 */
 
 export default class DataStore {
@@ -60,6 +65,16 @@ export default class DataStore {
     // Method to get the size of the map
     static getSize() {
         return this.#dataMap.size;
+    }
+
+    // Method to get the map in JSON format
+    static getJson() {
+        return Object.fromEntries(dataStore.#dataMap);
+    }
+
+    // Method to dump the json to a file located in the wdio directory
+    static dumpAsJson() {
+        fs.writeFileSync(path.join(path.resolve(),'dataDump.json'), JSON.stringify(this.getJson()));
     }
 
     // Method to clear the map
