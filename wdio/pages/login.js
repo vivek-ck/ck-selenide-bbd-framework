@@ -2,7 +2,7 @@ import Page from "./_page.js";
 
 class LoginPage extends Page {
 
-    get username() { return $('#username') }
+    get username() { return $('#usernamea') }
     get password() { return $('#password') }
     get submitBtn() { return $('#Login') }
 

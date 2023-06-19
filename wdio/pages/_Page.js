@@ -48,8 +48,8 @@ export default class Page {
                 console.log(`---------------Page loaded successfully---------------`);
                 break;
             } catch (err) {
-                if (tries > retries) {
-                    throw `Page Load failed after ${tries - 1} attempts with timeout`
+                if (tries == retries) {
+                    throw `Page Load failed after ${tries} attempts with timeout`
                 }
                 console.log(err);
                 console.log(`---------------Retrying: ${tries}---------------`);
@@ -75,8 +75,8 @@ export default class Page {
                 await (await element).waitForExist({ timeout: timeoutSec * 1000 });
                 break;
             } catch (err) {
-                if (tries > retries) {
-                    throw `Element not found after ${tries - 1} attempts.`
+                if (tries == retries) {
+                    throw `Element not found after ${tries} attempts.`
                 }
                 console.log(err);
                 console.log(`---------------Retrying: ${tries}---------------`);
