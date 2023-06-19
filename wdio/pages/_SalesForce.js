@@ -41,11 +41,12 @@ export default class SalesForce extends Page {
     }
 
     async waitUntilElementDisappears(element, timeoutSec = 20) {
+        let readyElement = await element;
         await browser.waitUntil(async () => {
-            return !(await element.isDisplayed());
+            return !(await readyElement.isDisplayed());
         }, {
             timeout: timeoutSec * 1000,
-            timeoutMsg: `Element with selector ${element.selector} didn't disappear in the given time: ${timeoutSec} sec`
+            timeoutMsg: `Element with selector ${readyElement.selector} didn't disappear in the given time: ${timeoutSec} sec`
         });
     }
 }

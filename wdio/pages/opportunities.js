@@ -87,11 +87,10 @@ class Opportunities extends SalesForce {
         await this.createApplicationButton.click();
         await browser.pause('2000');
         //Waiting for application to be created
-        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Create Application', 'h2'));
+        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Create Application', 'h2'), 40000);
         
         await this.waitForPageLoad();
-        await browser.pause(4000);
-        await browser.keys(Key.End);
+        await browser.pause(2000);
         await this.applicationsCountText(2).waitForExist();
     }
 

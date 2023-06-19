@@ -34,7 +34,7 @@ class Application extends SalesForce {
      * @param typeText The text representing the repayment type.
      * @return The label element corresponding to the repayment type.
      */
-    typeOption(typeText) { return $(`//span[text() = '${typeText}']/ancestor::label`) }
+    typeOption(typeText) { return $(`//span[text() = '${typeText}']/parent::*`) }
 
     /**
      * Returns the next button element for the specified collateral page.
@@ -78,13 +78,13 @@ class Application extends SalesForce {
     }
 
     async selectLoanPurpose(purposeText) {
-        await this.searchButton(searchButtonType.LOAN_PURPOSE).click();
+        await this.jsClick(await this.searchButton(searchButtonType.LOAN_PURPOSE));
         await this.getElementWithAttribute('placeholder', 'Search CL Purposes', 'input').waitForDisplayed();
         await this.getElementWithAttribute('placeholder', 'Search CL Purposes', 'input').setValue(purposeText);
         await this.searchResultLink(purposeText).waitForDisplayed();
         await browser.pause(1000);
         await this.searchResultLink(purposeText).click();
-        await browser.pause(1000);
+        await browser.pause(2000);
     }
 
     async selectBorrowerRating(ratingText) {
@@ -92,6 +92,7 @@ class Application extends SalesForce {
         await (await this.searchResultLink(ratingText)).waitForDisplayed();
         await browser.pause(1000);
         await this.searchResultLink(ratingText).click();
+        await browser.pause(2000);
     }
 
     async selectCollateralType(collateralText) {
@@ -100,18 +101,23 @@ class Application extends SalesForce {
         await this.searchResultLink(collateralText).waitForClickable();
         await browser.pause(1000);
         await this.searchResultLink(collateralText).click();
+        await browser.pause(2000);
     }
 
     async selectAccount(accountName) {
-        await $("//tr[@class = 'nx-item']/td[3]/div/div").click();
+        let searchAccount = await $("//span[text() = 'Account']/ancestor::table/tbody//div[contains(@class, 'ui-icon-search')]");
+        await searchAccount.click();
         await this.searchResultLink(accountName).waitForClickable();
         await browser.pause(1000);
         await this.searchResultLink(accountName).click();
+        await browser.pause(2000);
     }
 
-    async editLoan(rateType = 'Fixed', loanPurpose = 'Goodwill', borrowerRating = 'A', repaymentFrequency = 'Monthly', repaymentType = 'IO') {
+    async editLoan(rateType = 'Fixed', loanPurpose = 'Goodwill', borrowerRating = 'A', repaymentFrequency = 'Monthly', repaymentType = 'Check all') {
+        await this.goToApplicationTabWithText('Loan');
         await this.loanEditButton.click();
-        await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div').waitForExist();
+        await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div').waitForDisplayed();
+        await browser.pause(2000);
         await this.rateTypeDropdown.selectByAttribute('value', rateType);
         await this.selectLoanPurpose(loanPurpose);
         await this.selectBorrowerRating(borrowerRating);
@@ -119,14 +125,12 @@ class Application extends SalesForce {
         await this.repaymentTypeButton.click();
         await this.typeOption(repaymentType).click();
         await this.generatePricing.click();
-        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Saving Application...'));
-
         let pricingButton = await this.getElementWithAttribute('id', 'pricing-button', 'div');
-        await pricingButton.waitForDisplayed();
+        await pricingButton.waitForDisplayed({ timeout: 30000 });
         await pricingButton.click();
 
         let pricingCard = await this.getElementWithAttribute('id', 'pricingOptionCard', 'div');
-        await pricingCard.waitForExist({timeout: 30000});
+        await pricingCard.waitForDisplayed({ timeout: 30000 });
         await pricingCard.click();
 
         await this.getElementContainingExactText('Yes', 'span').click();
@@ -136,7 +140,7 @@ class Application extends SalesForce {
         await browser.pause(5000)
     }
 
-    async addNewCollateral(securityName = 'Testname', street = 'Test Street', suburb = 'Test Suburb', postal = '888888') {
+    async addNewCollateral(accountOwnerName, securityName = 'Testname', street = 'Test Street', suburb = 'Test Suburb', postal = '888888') {
         await this.goToApplicationTabWithText('Collateral');
         await this.reloadIfElementNotPresent(this.getElementContainingExactText('Add New Collateral', 'span'), 15, 2);
 
@@ -155,13 +159,18 @@ class Application extends SalesForce {
         await this.collateralInfoField('Postal Code').setValue(postal);
         await this.nextButton(3).click();
 
-        await this.getElementWithAttribute('title', 'Add New Collateral Owner', 'i').click();
-        await this.selectAccount('Dawson Daugherty');
+        let addNewCollateralOwnerButton = await this.getElementWithAttribute('title', 'Add New Collateral Owner', 'i');
+        await addNewCollateralOwnerButton.waitForDisplayed();
+        await browser.pause(1000);
+        await this.jsClick(addNewCollateralOwnerButton);
+        await browser.pause(2000);
+        await this.selectAccount(accountOwnerName);
         await this.ownershipPercentage.setValue('100');
         await this.nextButton(4).click();
+        await browser.pause(500);
 
         await this.getElementContainingExactText('Save', 'span').click();
-        await this.getElementWithAttribute('data-tab', 'collateralNewTabs', 'li').waitForDisplayed({ timeout: 40000 })
+        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Save', 'span'), 30);
     }
 
     async addParties(accountName, relationship = 'Individual Relationship', partyType = 'GUARANTOR') {
@@ -224,7 +233,7 @@ class Application extends SalesForce {
         //"Moving to final step" loading next page
         await browser.pause(2000);
         this.waitUntilElementDisappears(await this.getElementContainingExactText('Moving to final step'));
-        
+
         //Concent
         let electronicConcent = await $("//div[text() = 'Electronic Consent']/parent::div/following-sibling::div/input");
         let creditCheckConcent = await $("//div[text() = 'Credit Check Consent']/parent::div/following-sibling::div/input");
