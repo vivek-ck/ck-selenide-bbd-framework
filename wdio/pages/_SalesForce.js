@@ -1,4 +1,5 @@
 import DataStore from "../utils/datastore.js";
+import Retry from "../utils/retry.js";
 import Page from "./_page.js";
 import { Key } from "webdriverio";
 
@@ -6,6 +7,9 @@ export default class SalesForce extends Page {
 
     //DataStorage initialization
     dataStore = DataStore;
+
+    //Retry strategy initialization
+    retryStrategy = new Retry(1, 2000);
 
     //Common Selectors for text
     getElementContainingExactText(text, tagName = '*') { return $(`//${tagName}[text() = "${text}"]`) }

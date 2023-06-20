@@ -117,7 +117,7 @@ class Application extends SalesForce {
         await this.goToApplicationTabWithText('Loan');
         await this.loanEditButton.click();
         await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div').waitForDisplayed();
-        await browser.pause(4000);
+        await browser.pause(5000);
         await this.rateTypeDropdown.selectByAttribute('value', rateType);
         await this.selectLoanPurpose(loanPurpose);
         await this.selectBorrowerRating(borrowerRating);
