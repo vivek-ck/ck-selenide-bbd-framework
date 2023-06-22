@@ -67,8 +67,59 @@ export default class Page {
         await this.#checkPageLoad();
     }
 
+
+
     async reloadIfElementNotPresent(element, timeoutSec = '20', retries = 4) {
         let tries = 1;
+        while (tries <= retries) {
+            try {
+                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
+                // await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                break;
+            } catch (err) {
+                if (tries == retries) {
+                    throw `Element not found after ${tries} attempts.`
+                }
+                console.log(err);
+                console.log(`---------------Retrying: ${tries}---------------`);
+            }
+
+            console.log(`---------------Refreshing Page---------------`);
+            await this.forceReload(timeoutSec);
+
+            tries++;
+        }
+    }
+
+    async reloadIfElementNotClickable(element, timeoutSec = '20', retries = 4) {
+        let tries = 1;
+        while (tries <= retries) {
+            try {
+                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
+                // await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                await (await element).waitForClickable({ timeout: timeoutSec * 1000 });
+                break;
+            } catch (err) {
+                if (tries == retries) {
+                    throw `Element not found after ${tries} attempts.`
+                }
+                console.log(err);
+                console.log(`---------------Retrying: ${tries}---------------`);
+            }
+
+            console.log(`---------------Refreshing Page---------------`);
+            await this.forceReload(timeoutSec);
+
+            tries++;
+        }
+    }
+
+    async reloadIfSaveButtonNotPresentAndReWrite(text, timeoutSec = '20', retries = 4) {
+        let tries = 1;
+        let element = await this.getElementWithAttribute('title', 'Save New','div');
+        let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+
         while (tries <= retries) {
             try {
                 console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
@@ -84,6 +135,11 @@ export default class Page {
 
             console.log(`---------------Refreshing Page---------------`);
             await this.forceReload(timeoutSec);
+            await this.reloadIfElementNotClickable(this.addNewQuestionButton())
+            await this.addNewQuestionButton().waitForClickable();
+            await this.addNewQuestionButton().click();
+            await approvalConditionTextbox.waitForDisplayed();
+            await approvalConditionTextbox.setValue(text);
 
             tries++;
         }

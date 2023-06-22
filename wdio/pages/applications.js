@@ -56,14 +56,19 @@ class Application extends SalesForce {
 
     collateralInfoField(fieldName) { return $(`//div[text() = '${fieldName}']/parent::div/following-sibling::div//input`) }
 
+    addNewQuestionButton() { return $(`//th[@class="actioncolumn"]//i`)}
+
+    settelmentConditionCheckBox(text) { return $(`//div[text()='${text}']/ancestor::td/preceding-sibling::td`) }
+
     async searchApplicationWithId(applicationId) {
         await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}\n`);
     }
 
     async goToApplicationTabWithText(tabName) {
         let tabNameSelector = await $(`//div[text() = '${tabName}']//ancestor::li`);
-        await tabNameSelector.waitForDisplayed();
+        await tabNameSelector.waitForClickable();
         await tabNameSelector.click();
+        // await this.jsClick(tabNameSelector);
     }
 
     async openApplicationWithId(applicationId) {
@@ -247,6 +252,34 @@ class Application extends SalesForce {
 
         //Switch to Accessibility Title Iframe
         await browser.switchToParentFrame();
+    }
+
+    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', settlementCondition='<Enter Guarantor Name> to obtain independent legal advice'){
+        await this.goToApplicationTabWithText('Credit');
+        await this.goToApplicationTabWithText('Add Approval Conditions');
+        // await browser.refresh();
+        // await this.forceReload();
+        //the (+) button
+        await this.reloadIfElementNotClickable(this.addNewQuestionButton())
+        await this.addNewQuestionButton().waitForClickable();
+        await this.addNewQuestionButton().click();
+
+        //the input field
+        let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+        await approvalConditionTextbox.waitForDisplayed();
+        await approvalConditionTextbox.setValue(approvalCondition);
+
+        //the save button
+        await this.reloadIfElementNotPresent(await this.getElementWithAttribute('title', 'Save New','div'));
+        await this.reloadIfSaveButtonNotPresentAndReWrite(approvalCondition);
+        await this.getElementWithAttribute('title', 'Save New','div').click();
+
+        //predefined condition
+        await this.waitUntilElementDisappears(this.getElementContainingExactText('Adding approval condition'));
+        await this.getElementContainingExactText('Pre-defined approval conditions', 'span').click();
+        await this.settelmentConditionCheckBox(settlementCondition).click();
+        await this.getElementContainingExactText('Add conditions', 'div').click();
+
     }
 }
 
