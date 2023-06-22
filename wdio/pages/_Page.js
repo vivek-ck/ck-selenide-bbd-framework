@@ -69,13 +69,14 @@ export default class Page {
 
 
 
-    async reloadIfElementNotPresent(element, timeoutSec = '20', retries = 4) {
+    async reloadIfElementNotPresent(element, timeoutSec = 10, retries = 4) {
         let tries = 1;
+        let timeOut = timeoutSec;
         while (tries <= retries) {
             try {
                 console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
                 // await (await element).waitForExist({ timeout: timeoutSec * 1000 });
-                await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                await (await element).waitForExist({ timeout: timeOut * 1000 });
                 break;
             } catch (err) {
                 if (tries == retries) {
@@ -86,8 +87,8 @@ export default class Page {
             }
 
             console.log(`---------------Refreshing Page---------------`);
-            await this.forceReload(timeoutSec);
-
+            await this.forceReload();
+            timeOut += 15;
             tries++;
         }
     }
@@ -115,15 +116,17 @@ export default class Page {
         }
     }
 
-    async reloadIfSaveButtonNotPresentAndReWrite(text, timeoutSec = '20', retries = 4) {
+    async retryIfSaveButtonNotPresent( timeoutSec = '20', retries = 4) {
         let tries = 1;
-        let element = await this.getElementWithAttribute('title', 'Save New','div');
-        let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+        let saveNewButton =$(`(//div[@title='Save new' or @title='Save'])[1]`);
+        let addNewQuestionButton = await $(`(//th[@class="actioncolumn"]//i)[1]`);
+        // let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+
 
         while (tries <= retries) {
             try {
                 console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
-                await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                await (await saveNewButton).waitForExist({ timeout: timeoutSec * 1000 });
                 break;
             } catch (err) {
                 if (tries == retries) {
@@ -135,11 +138,15 @@ export default class Page {
 
             console.log(`---------------Refreshing Page---------------`);
             await this.forceReload(timeoutSec);
-            await this.reloadIfElementNotClickable(this.addNewQuestionButton())
-            await this.addNewQuestionButton().waitForClickable();
-            await this.addNewQuestionButton().click();
-            await approvalConditionTextbox.waitForDisplayed();
-            await approvalConditionTextbox.setValue(text);
+            await this.goToApplicationTabWithText('Credit');
+            await this.goToApplicationTabWithText('Add Approval Conditions');
+            await this.goToApplicationTabWithText('Add Settlement Conditions');
+            await this.goToApplicationTabWithText('Add Approval Conditions');
+            await this.reloadIfElementNotClickable(addNewQuestionButton)
+            // await this.addNewQuestionButton().waitForClickable();
+            await this.addNewQuestionButton.click();
+            // await approvalConditionTextbox.waitForDisplayed();
+            // await approvalConditionTextbox.setValue(approvalCondition);
 
             tries++;
         }

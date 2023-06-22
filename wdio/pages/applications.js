@@ -9,6 +9,8 @@ class Application extends SalesForce {
     get rateTypeDropdown() { return $("//div[text() = 'Rate Type']/../following-sibling::div/select") }
     get generatePricing() { return $("//span[text() = 'Generate Pricing']/parent::div") }
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
+    get addNewQuestionButton() { return $(`(//th[@class="actioncolumn"]//i)[1]`)}
+
 
     //iframe[@id ='party-iframe'] {child of "accessibility title"}
     get partyTypeButton() { return $("//div[text() = 'Party Type']/../following-sibling::div") }
@@ -56,9 +58,11 @@ class Application extends SalesForce {
 
     collateralInfoField(fieldName) { return $(`//div[text() = '${fieldName}']/parent::div/following-sibling::div//input`) }
 
-    addNewQuestionButton() { return $(`//th[@class="actioncolumn"]//i`)}
 
-    settelmentConditionCheckBox(text) { return $(`//div[text()='${text}']/ancestor::td/preceding-sibling::td`) }
+    approvalConditionCheckBox(index) { return $(`(//span[text() = 'Approval Conditions']/../following-sibling::div//td[not(@style)])[${index}]`) }
+
+    saveNewButton(count=1) { return $(`(//div[@title='Save new' or @title='Save'])[${count}]`) }
+    addNewQuestionButtoninSC(count=1) { return $(`(//th[@class="actioncolumn"]//i)[${count}]`) }
 
     async searchApplicationWithId(applicationId) {
         await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}\n`);
@@ -66,6 +70,8 @@ class Application extends SalesForce {
 
     async goToApplicationTabWithText(tabName) {
         let tabNameSelector = await $(`//div[text() = '${tabName}']//ancestor::li`);
+        // await tabNameSelector.waitForExist();
+        await this.reloadIfElementNotPresent(tabNameSelector);
         await tabNameSelector.waitForClickable();
         await tabNameSelector.click();
         // await this.jsClick(tabNameSelector);
@@ -254,31 +260,75 @@ class Application extends SalesForce {
         await browser.switchToParentFrame();
     }
 
-    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', settlementCondition='<Enter Guarantor Name> to obtain independent legal advice'){
+    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', conditionIndex=1){
+        await browser.pause(10000);
         await this.goToApplicationTabWithText('Credit');
         await this.goToApplicationTabWithText('Add Approval Conditions');
+        await this.goToApplicationTabWithText('Add Settlement Conditions');
+        await this.goToApplicationTabWithText('Add Approval Conditions');
+        await browser.pause(10000);
         // await browser.refresh();
         // await this.forceReload();
         //the (+) button
-        await this.reloadIfElementNotClickable(this.addNewQuestionButton())
-        await this.addNewQuestionButton().waitForClickable();
-        await this.addNewQuestionButton().click();
+        await this.reloadIfElementNotClickable(await this.addNewQuestionButton)
+        // await this.addNewQuestionButton().waitForClickable();
+        await this.addNewQuestionButton.click();
+
+        //save button visibility check
+        await this.retryIfSaveButtonNotPresent();
 
         //the input field
-        let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+        // await browser.pause(10000);
+        let approvalConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]");
         await approvalConditionTextbox.waitForDisplayed();
         await approvalConditionTextbox.setValue(approvalCondition);
 
         //the save button
-        await this.reloadIfElementNotPresent(await this.getElementWithAttribute('title', 'Save New','div'));
-        await this.reloadIfSaveButtonNotPresentAndReWrite(approvalCondition);
-        await this.getElementWithAttribute('title', 'Save New','div').click();
+        // await this.reloadIfElementNotPresent(await this.getElementWithAttribute('title', 'Save New','div'));
+        // await this.reloadIfSaveButtonNotPresentAndReWrite(approvalCondition);
+        await this.saveNewButton().waitForClickable();
+        await this.saveNewButton().click();
 
         //predefined condition
-        await this.waitUntilElementDisappears(this.getElementContainingExactText('Adding approval condition'));
+        await this.waitUntilElementDisappears(await this.getElementContainingExactText('Adding approval condition'), 40);
+        await this.getElementContainingExactText('Pre-defined approval conditions', 'span').waitForClickable();
         await this.getElementContainingExactText('Pre-defined approval conditions', 'span').click();
+        // await this.settelmentConditionCheckBox(settlementCondition).click();
+        // await browser.pause(3000);
+        await this.approvalConditionCheckBox(conditionIndex).waitForClickable();
+        await this.approvalConditionCheckBox(conditionIndex).click();
+        await this.getElementContainingExactText('Add Conditions', 'div').waitForClickable();
+        await this.getElementContainingExactText('Add Conditions', 'div').click();
+
+    }
+    async addCreditSettlementConditions(approvalCondition = 'Demo Settlement condition', settlementCondition='Acceptable tax invoice confirming vehicle identifiers'){
+        await this.goToApplicationTabWithText('Add Settlement Conditions');
+        // await this.goToApplicationTabWithText('Add Approval Conditions');
+
+        // await browser.refresh();
+        // await this.forceReload();
+        //the (+) button
+        await this.reloadIfElementNotClickable(this.addNewQuestionButtoninSC)
+        // await this.addNewQuestionButton().waitForClickable();
+        await this.addNewQuestionButtoninSC.click();
+
+        //save button visibility check
+        await this.retryIfSaveButtonNotPresent();
+        //the input field
+        let approvalConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]");
+        await approvalConditionTextbox.waitForDisplayed();
+        await approvalConditionTextbox.setValue(approvalCondition);
+
+        //the save button
+        // await this.reloadIfElementNotPresent(await this.getElementWithAttribute('title', 'Save New','div'));
+        // await this.reloadIfSaveButtonNotPresentAndReWrite(approvalCondition);
+        await this.saveNewButton().click();
+
+        //predefined condition
+        await this.waitUntilElementDisappears(this.getElementContainingExactText('Adding settlement condition'));
+        await this.getElementContainingExactText('Pre-defined settlement conditions', 'span').click();
         await this.settelmentConditionCheckBox(settlementCondition).click();
-        await this.getElementContainingExactText('Add conditions', 'div').click();
+        await this.getElementContainingExactText('Add Conditions', 'div').click();
 
     }
 }
