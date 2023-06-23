@@ -53,8 +53,8 @@ import DataStore from '../../utils/datastore.js';
 
         await Home.goTo('Applications')
         await Applications.openApplicationWithId('APP-0000001499');
-        await Applications.addCreditApprovalConditions();
-        // await Applications.addCreditSettlementConditions();
+        // await Applications.addCreditApprovalConditions();
+        await Applications.addCreditSettlementConditions();
 
 
 
