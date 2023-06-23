@@ -151,7 +151,7 @@ class Application extends SalesForce {
 
     async addNewCollateral(accountOwnerName, securityName = 'Testname', street = 'Test Street', suburb = 'Test Suburb', postal = '888888') {
         await this.goToApplicationTabWithText('Collateral');
-        await this.reloadIfElementNotPresent(this.getElementContainingExactText('Add New Collateral', 'span'), 15, 2);
+        await this.reloadIfElementNotPresent(this.getElementContainingExactText('Add New Collateral', 'span'), {timeoutSec: 15, retries: 2});
 
         await this.getElementContainingExactText('Add New Collateral', 'span').click();
         await this.getElementWithAttribute('pagename', 'PledgeCollaterals', 'div').waitForDisplayed();
@@ -297,7 +297,6 @@ class Application extends SalesForce {
         );
 
         //the input field
-        // await browser.pause(10000);
         let approvalConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]");
         await approvalConditionTextbox.waitForDisplayed();
         await approvalConditionTextbox.setValue(approvalCondition);
@@ -309,8 +308,6 @@ class Application extends SalesForce {
         await this.waitUntilElementDisappears(await this.getElementContainingExactText('Adding approval condition'), 40);
         await this.getElementContainingExactText('Pre-defined approval conditions', 'span').waitForClickable();
         await this.getElementContainingExactText('Pre-defined approval conditions', 'span').click();
-        // await this.settelmentConditionCheckBox(settlementCondition).click();
-        // await browser.pause(3000);
         await this.approvalConditionCheckBox(conditionIndex).waitForClickable();
         await this.approvalConditionCheckBox(conditionIndex).click();
         await this.getElementContainingExactText('Add Conditions', 'div').waitForClickable();
