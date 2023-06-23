@@ -28,7 +28,7 @@ export default class Page {
 
     async #checkPageLoad(timeoutSec) {
         await browser.waitUntil(
-            async () => await browser.execute( 
+            async () => await browser.execute(
                 () => document.readyState === 'complete'
             ),
             {
@@ -39,7 +39,7 @@ export default class Page {
         );
     }
 
-    async waitForPageLoad( timeoutSec = 30, retries = 2 ) {
+    async waitForPageLoad(timeoutSec = 30, retries = 2) {
         let tries = 1;
         while (tries <= retries) {
             try {
@@ -67,12 +67,28 @@ export default class Page {
         await this.#checkPageLoad();
     }
 
-    async reloadIfElementNotPresent(element, timeoutSec = '20', retries = 4) {
+
+
+    async #reloadIfElementNotInState(element, elementState, retryStrategy = { timeoutSec: 10, retries: 4 }) {
+        let duration = retryStrategy.timeoutSec * 1000;
+        let retries = retryStrategy.retries;
+        let resolvedElement = await element;
         let tries = 1;
-        while (tries <= retries) {
+
+        while (tries <= retryStrategy.retries) {
             try {
-                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
-                await (await element).waitForExist({ timeout: timeoutSec * 1000 });
+                console.log(`---------------Waiting for the element to be ${elementState} | Attempt: ${tries}---------------`);
+                switch (elementState) {
+                    case 'exists':
+                        await resolvedElement.waitForExist({ timeout: duration });
+                        break;
+                    case 'clickable':
+                        await resolvedElement.waitForClickable({ timeout: duration });
+                        break;
+                    case 'displayed':
+                        await resolvedElement.waitForDisplayed({ timeout: duration });
+                        break;
+                }
                 break;
             } catch (err) {
                 if (tries == retries) {
@@ -83,10 +99,28 @@ export default class Page {
             }
 
             console.log(`---------------Refreshing Page---------------`);
-            await this.forceReload(timeoutSec);
+            await this.forceReload();
+
+            // Kind of exponential backoff
+            duration += 15;
 
             tries++;
         }
+    }
+
+    async reloadIfElementNotClickable(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
+        let elementState = 'clickable';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+    }
+
+    async reloadIfElementNotPresent(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
+        let elementState = 'exists';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+    }
+
+    async reloadIfElementNotDisplayed(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
+        let elementState = 'displayed';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
     }
 
 }

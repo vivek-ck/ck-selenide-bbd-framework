@@ -58,7 +58,7 @@ export default class Retry {
 
                 console.log(`\n---------------After Method---------------`);
                 await after();
-                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries}---------------`);
+                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries+1}---------------`);
                 await new Promise(resolve => setTimeout(resolve, retryingAfterDuration));
                 console.log(`---------------Before Method---------------`);
                 await before();
