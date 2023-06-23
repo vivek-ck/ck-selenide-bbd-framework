@@ -69,14 +69,25 @@ export default class Page {
 
 
 
-    async reloadIfElementNotPresent(element, timeoutSec = 10, retries = 4) {
+    async #reloadIfElementNotInState(element, elementState, retryStrategy = {timeoutSec: 10, retries: 4}) {
+        let duration = retryStrategy.timeoutSec * 1000;
+        let resolvedElement = await element;
         let tries = 1;
-        let timeOut = timeoutSec;
-        while (tries <= retries) {
+
+        while (tries <= retryStrategy.retries) {
             try {
-                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
-                // await (await element).waitForExist({ timeout: timeoutSec * 1000 });
-                await (await element).waitForExist({ timeout: timeOut * 1000 });
+                console.log(`---------------Waiting for the element to be ${conditon} | Attempt: ${tries}---------------`);
+                switch(elementState) {
+                    case 'exists':
+                        await resolvedElement.waitForExist({ timeout: duration });
+                        break;
+                    case 'clickable':
+                        await resolvedElement.waitForClickable({ timeout: duration });
+                        break;
+                    case 'displayed':
+                        await resolvedElement.waitForDisplayed({ timeout: duration });
+                        break;
+                }
                 break;
             } catch (err) {
                 if (tries == retries) {
@@ -88,68 +99,27 @@ export default class Page {
 
             console.log(`---------------Refreshing Page---------------`);
             await this.forceReload();
-            timeOut += 15;
-            tries++;
-        }
-    }
 
-    async reloadIfElementNotClickable(element, timeoutSec = '20', retries = 4) {
-        let tries = 1;
-        while (tries <= retries) {
-            try {
-                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
-                // await (await element).waitForExist({ timeout: timeoutSec * 1000 });
-                await (await element).waitForClickable({ timeout: timeoutSec * 1000 });
-                break;
-            } catch (err) {
-                if (tries == retries) {
-                    throw `Element not found after ${tries} attempts.`
-                }
-                console.log(err);
-                console.log(`---------------Retrying: ${tries}---------------`);
-            }
-
-            console.log(`---------------Refreshing Page---------------`);
-            await this.forceReload(timeoutSec);
+            // Kind of exponential backoff
+            duration += 15;
 
             tries++;
         }
     }
 
-    async retryIfSaveButtonNotPresent( timeoutSec = '20', retries = 4) {
-        let tries = 1;
-        let saveNewButton =$(`(//div[@title='Save new' or @title='Save'])[1]`);
-        let addNewQuestionButton = await $(`(//th[@class="actioncolumn"]//i)[1]`);
-        // let approvalConditionTextbox = await $("((//span[text()='Condition Statement'])[1]/ancestor::thead/following-sibling::tbody//td[@style=''])[1]//textarea");
+    async reloadIfElementNotClickable(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+        let elementState = 'clickable';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+    }
 
+    async reloadIfElementNotPresent(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+        let elementState = 'exists';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+    }
 
-        while (tries <= retries) {
-            try {
-                console.log(`---------------Waiting the for element to load | Attempt: ${tries}---------------`);
-                await (await saveNewButton).waitForExist({ timeout: timeoutSec * 1000 });
-                break;
-            } catch (err) {
-                if (tries == retries) {
-                    throw `Element not found after ${tries} attempts.`
-                }
-                console.log(err);
-                console.log(`---------------Retrying: ${tries}---------------`);
-            }
-
-            console.log(`---------------Refreshing Page---------------`);
-            await this.forceReload(timeoutSec);
-            await this.goToApplicationTabWithText('Credit');
-            await this.goToApplicationTabWithText('Add Approval Conditions');
-            await this.goToApplicationTabWithText('Add Settlement Conditions');
-            await this.goToApplicationTabWithText('Add Approval Conditions');
-            await this.reloadIfElementNotClickable(addNewQuestionButton)
-            // await this.addNewQuestionButton().waitForClickable();
-            await this.addNewQuestionButton.click();
-            // await approvalConditionTextbox.waitForDisplayed();
-            // await approvalConditionTextbox.setValue(approvalCondition);
-
-            tries++;
-        }
+    async reloadIfElementNotDisplayed(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+        let elementState = 'displayed';
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
     }
 
 }
