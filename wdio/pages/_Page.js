@@ -71,12 +71,13 @@ export default class Page {
 
     async #reloadIfElementNotInState(element, elementState, retryStrategy = { timeoutSec: 10, retries: 4 }) {
         let duration = retryStrategy.timeoutSec * 1000;
+        let retries = retryStrategy.retries;
         let resolvedElement = await element;
         let tries = 1;
 
         while (tries <= retryStrategy.retries) {
             try {
-                console.log(`---------------Waiting for the element to be ${conditon} | Attempt: ${tries}---------------`);
+                console.log(`---------------Waiting for the element to be ${elementState} | Attempt: ${tries}---------------`);
                 switch (elementState) {
                     case 'exists':
                         await resolvedElement.waitForExist({ timeout: duration });

@@ -9,7 +9,6 @@ class Application extends SalesForce {
     get rateTypeDropdown() { return $("//div[text() = 'Rate Type']/../following-sibling::div/select") }
     get generatePricing() { return $("//span[text() = 'Generate Pricing']/parent::div") }
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
-    get addNewQuestionButton() { return $(`(//th[@class="actioncolumn"]//i)[1]`) }
     get saveNewButton() { return $("//textarea/ancestor::td/preceding-sibling::td//div[@title='Save New' or @title = 'Save']") }
 
 
@@ -62,8 +61,11 @@ class Application extends SalesForce {
 
     approvalConditionCheckBox(index) { return $(`(//span[text() = 'Approval Conditions']/../following-sibling::div//td[not(@style)])[${index}]`) }
 
-    addNewQuestionButtoninSC(index = 1) { return $(`(//th[@class="actioncolumn"]//i)[${index}]`) }
+    addNewQuestionButton(index) { return $(`(//th[@class="actioncolumn"]//i)[${index}]`) }
 
+
+
+    // Async methods
     async searchApplicationWithId(applicationId) {
         await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}\n`);
     }
@@ -260,13 +262,17 @@ class Application extends SalesForce {
 
     async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', conditionIndex = 1) {
         await this.goToApplicationTabWithText('Credit');
+        await browser.pause(2000);
         await this.goToApplicationTabWithText('Add Approval Conditions');
+        await browser.pause(2000);
         await this.goToApplicationTabWithText('Add Settlement Conditions');
+        await browser.pause(2000);
         await this.goToApplicationTabWithText('Add Approval Conditions');
 
         //the (+) button
-        await this.reloadIfElementNotClickable(await this.addNewQuestionButton(1))
-        await this.addNewQuestionButton(1).click();
+        let addNewQuestionButton = await this.addNewQuestionButton(1);
+        await this.reloadIfElementNotClickable(addNewQuestionButton);
+        await addNewQuestionButton.click();
 
         //save button visibility check
         await this.retryStrategy.retry(
@@ -282,8 +288,8 @@ class Application extends SalesForce {
                 await this.goToApplicationTabWithText('Add Settlement Conditions');
                 await browser.pause(2000);
                 await this.goToApplicationTabWithText('Add Approval Conditions');
-                await this.reloadIfElementNotClickable(this.addNewQuestionButton);
-                await this.addNewQuestionButton.click();
+                await this.reloadIfElementNotClickable(addNewQuestionButton);
+                await addNewQuestionButton.click();
             },
 
             // After method
