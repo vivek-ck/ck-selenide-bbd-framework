@@ -9,6 +9,8 @@ class Application extends SalesForce {
     get rateTypeDropdown() { return $("//div[text() = 'Rate Type']/../following-sibling::div/select") }
     get generatePricing() { return $("//span[text() = 'Generate Pricing']/parent::div") }
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
+    get addNewQuestionButton() { return $(`(//th[@class="actioncolumn"]//i)[1]`) }
+    get saveNewButton() { return $("//textarea/ancestor::td/preceding-sibling::td//div[@title='Save New' or @title = 'Save']") }
 
 
     //iframe[@id ='party-iframe'] {child of "accessibility title"}
@@ -60,8 +62,7 @@ class Application extends SalesForce {
 
     approvalConditionCheckBox(index) { return $(`(//span[text() = 'Approval Conditions']/../following-sibling::div//td[not(@style)])[${index}]`) }
 
-    saveNewButton(count=1) { return $(`(//div[@title='Save new' or @title='Save'])[${count}]`) }
-    addNewQuestionButton(index) { return $(`(//th[@class="actioncolumn"]//i)[${index}]`)}
+    addNewQuestionButtoninSC(index = 1) { return $(`(//th[@class="actioncolumn"]//i)[${index}]`) }
 
     async searchApplicationWithId(applicationId) {
         await this.getElementWithAttribute('placeholder', 'Search this list...', 'input').setValue(`${applicationId}\n`);
@@ -69,11 +70,9 @@ class Application extends SalesForce {
 
     async goToApplicationTabWithText(tabName) {
         let tabNameSelector = await $(`//div[text() = '${tabName}']//ancestor::li`);
-        // await tabNameSelector.waitForExist();
         await this.reloadIfElementNotPresent(tabNameSelector);
         await tabNameSelector.waitForClickable();
         await tabNameSelector.click();
-        // await this.jsClick(tabNameSelector);
     }
 
     async openApplicationWithId(applicationId) {
@@ -259,21 +258,42 @@ class Application extends SalesForce {
         await browser.switchToParentFrame();
     }
 
-    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', conditionIndex=1){
-        await browser.pause(10000);
+    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', conditionIndex = 1) {
         await this.goToApplicationTabWithText('Credit');
         await this.goToApplicationTabWithText('Add Approval Conditions');
         await this.goToApplicationTabWithText('Add Settlement Conditions');
         await this.goToApplicationTabWithText('Add Approval Conditions');
-        await browser.pause(10000);
-        // await browser.refresh();
-        // await this.forceReload();
+
         //the (+) button
         await this.reloadIfElementNotClickable(await this.addNewQuestionButton(1))
         await this.addNewQuestionButton(1).click();
 
         //save button visibility check
-        await this.retryIfSaveButtonNotPresent();
+        await this.retryStrategy.retry(
+            // Main method
+            async () => {
+                await this.saveNewButton.waitForDisplayed({ timeout: 10000 });
+            },
+
+            // Before method
+            async () => {
+                await this.goToApplicationTabWithText('Credit');
+                await browser.pause(2000);
+                await this.goToApplicationTabWithText('Add Settlement Conditions');
+                await browser.pause(2000);
+                await this.goToApplicationTabWithText('Add Approval Conditions');
+                await this.reloadIfElementNotClickable(this.addNewQuestionButton);
+                await this.addNewQuestionButton.click();
+            },
+
+            // After method
+            async () => {
+                this.forceReload();
+            },
+
+            // Number of retries
+            2
+        );
 
         //the input field
         // await browser.pause(10000);
@@ -282,10 +302,7 @@ class Application extends SalesForce {
         await approvalConditionTextbox.setValue(approvalCondition);
 
         //the save button
-        // await this.reloadIfElementNotPresent(await this.getElementWithAttribute('title', 'Save New','div'));
-        // await this.reloadIfSaveButtonNotPresentAndReWrite(approvalCondition);
-        await this.saveNewButton().waitForClickable();
-        await this.saveNewButton().click();
+        await this.saveNewButton.click();
 
         //predefined condition
         await this.waitUntilElementDisappears(await this.getElementContainingExactText('Adding approval condition'), 40);
@@ -299,13 +316,11 @@ class Application extends SalesForce {
         await this.getElementContainingExactText('Add Conditions', 'div').click();
 
     }
-    async addCreditSettlementConditions(approvalCondition = 'Demo Settlement condition', settlementCondition='Acceptable tax invoice confirming vehicle identifiers'){
-        await browser.pause(10000);
+    async addCreditSettlementConditions(approvalCondition = 'Demo Settlement condition', settlementCondition='Acceptable tax invoice confirming vehicle identifiers') {
         await this.goToApplicationTabWithText('Credit');
         // await this.goToApplicationTabWithText('Add Approval Conditions');
         await this.goToApplicationTabWithText('Add Settlement Conditions');
         // await this.goToApplicationTabWithText('Add Approval Conditions');
-        await browser.pause(10000);
 
         //the (+) button
         await this.reloadIfElementNotClickable(await this.addNewQuestionButton(2))
