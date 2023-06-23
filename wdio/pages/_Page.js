@@ -28,7 +28,7 @@ export default class Page {
 
     async #checkPageLoad(timeoutSec) {
         await browser.waitUntil(
-            async () => await browser.execute( 
+            async () => await browser.execute(
                 () => document.readyState === 'complete'
             ),
             {
@@ -39,7 +39,7 @@ export default class Page {
         );
     }
 
-    async waitForPageLoad( timeoutSec = 30, retries = 2 ) {
+    async waitForPageLoad(timeoutSec = 30, retries = 2) {
         let tries = 1;
         while (tries <= retries) {
             try {
@@ -69,7 +69,7 @@ export default class Page {
 
 
 
-    async #reloadIfElementNotInState(element, elementState, retryStrategy = {timeoutSec: 10, retries: 4}) {
+    async #reloadIfElementNotInState(element, elementState, retryStrategy = { timeoutSec: 10, retries: 4 }) {
         let duration = retryStrategy.timeoutSec * 1000;
         let resolvedElement = await element;
         let tries = 1;
@@ -77,7 +77,7 @@ export default class Page {
         while (tries <= retryStrategy.retries) {
             try {
                 console.log(`---------------Waiting for the element to be ${conditon} | Attempt: ${tries}---------------`);
-                switch(elementState) {
+                switch (elementState) {
                     case 'exists':
                         await resolvedElement.waitForExist({ timeout: duration });
                         break;
@@ -107,17 +107,17 @@ export default class Page {
         }
     }
 
-    async reloadIfElementNotClickable(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+    async reloadIfElementNotClickable(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'clickable';
         await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
     }
 
-    async reloadIfElementNotPresent(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+    async reloadIfElementNotPresent(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'exists';
         await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
     }
 
-    async reloadIfElementNotDisplayed(element, timeoutStrategy = {timeoutSec: 20, retries: 4}) {
+    async reloadIfElementNotDisplayed(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'displayed';
         await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
     }
