@@ -10,6 +10,8 @@ class Application extends SalesForce {
     get generatePricing() { return $("//span[text() = 'Generate Pricing']/parent::div") }
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
     get saveNewButton() { return $("//textarea/ancestor::td/preceding-sibling::td//div[@title='Save New' or @title = 'Save']") }
+    get originationHamburgerButton() { return $("//div[text()='Origination']/ancestor::div[@class='nx-queue-item-inner-with-icon']/preceding-sibling::div//i") }
+    // get privacyFormCheckbox() { return $("//div[text()='Privacy form sent to Borrower']/ancestor::td/preceding-sibling::td//input") }
 
 
     //iframe[@id ='party-iframe'] {child of "accessibility title"}
@@ -62,7 +64,8 @@ class Application extends SalesForce {
     approvalConditionCheckBox(index) { return $(`(//span[text() = 'Approval Conditions']/../following-sibling::div//td[not(@style)])[${index}]`) }
 
     addNewQuestionButton(index) { return $(`(//th[@class="actioncolumn"]//i)[${index}]`) }
-
+    
+    formCheckBoxWithText(text) { return $(`//div[text()='${text}']/ancestor::td/preceding-sibling::td//input`) }
 
 
     // Async methods
@@ -354,6 +357,17 @@ class Application extends SalesForce {
         await this.approvalConditionCheckBox(conditionIndex).click();
         await this.getElementContainingExactText('Add Conditions', 'div').waitForClickable();
         await this.getElementContainingExactText('Add Conditions', 'div').click();
+
+    }
+
+    async addTaskList(){
+        await this.getElementWithAttribute('id', 'manage-stages', 'div').click();
+        await this.originationHamburgerButton.waitForClickable();
+        await this.originationHamburgerButton.click();
+        await this.formCheckBoxWithText('Privacy form sent to Borrower').waitForClickable();
+        await this.formCheckBoxWithText('Privacy form sent to Borrower').click();
+        await this.formCheckBoxWithText('Application Form Sent to Borrower').waitForClickable();
+        await this.formCheckBoxWithText('Application Form Sent to Borrower').click();
 
     }
 }
