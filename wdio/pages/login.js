@@ -7,20 +7,23 @@ class LoginPage extends Page {
     get submitBtn() { return $('#Login') }
 
     async open() {
-        await browser.url("https://kooyonggroup--kguat2.sandbox.my.salesforce.com/");
+        await browser.url("https://kooyonggroup--kguat2.sandbox.my.salesforce.com/")
+        await browser.maximizeWindow()
     }
 
-    async loginAsRAuser() {
-        await this.username.setValue('niladri.acharya@cloudkaptan.com.kguat2.ra');
-        await this.password.setValue('welcome@123');
-        await this.submitBtn.click();
+    async login(username, password = 'welcome@123') {
+        await this.username.setValue(username)
+        await this.password.setValue(password)
+        await this.submitBtn.click()
+    }
+
+    async loginAsRaUser() {
+        await this.login('niladri.acharya@cloudkaptan.com.kguat2.ra')
     }
     async loginAsCreditOfficer() {
-        await this.username.setValue('niladri.acharya@cloudkaptan.com.kguat2.credit');
-        await this.password.setValue('welcome@123');
-        await this.submitBtn.click();
+        await this.login('niladri.acharya@cloudkaptan.com.kguat2.credit')
     }
     
 }
 
-export default new LoginPage();
+export default new LoginPage()

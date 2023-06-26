@@ -4,4 +4,4 @@ class HomePage extends SalesForce {
 
 }
 
-export default new HomePage();
+export default new HomePage()

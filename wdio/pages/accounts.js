@@ -9,23 +9,23 @@ class Account extends SalesForce {
     get ageRangeDropdown() { return $("//button[@aria-label='Age Range, --None--']") }
 
     async searchAccount(name) {
-        await this.accountSearchField.setValue(name+'\n');
+        await this.accountSearchField.setValue(name+'\n')
     }
 
     async openAccountWithName(name) {
-        await this.searchAccount(name);
-        await browser.pause(2000);
-        await this.getElementContainingExactText(name, 'a').click();
+        await this.searchAccount(name)
+        await browser.pause(2000)
+        await this.getElementContainingExactText(name, 'a').click()
     }
 
     async editBirthDate(date) {
-        await this.jsClick(this.editBirthdateButton);
-        await this.saveEditButton.waitForExist({timeout: 20000});
-        await this.birthdateField.setValue(date);
-        await this.dropDownLazySelect(this.ageRangeDropdown);
-        await this.jsClick(this.saveEditButton);
-        await browser.pause(4000);
+        await this.jsClick(this.editBirthdateButton)
+        await this.saveEditButton.waitForExist({timeout: 20000})
+        await this.birthdateField.setValue(date)
+        await this.dropDownLazySelect(this.ageRangeDropdown)
+        await this.jsClick(this.saveEditButton)
+        await browser.pause(4000)
     }
 }
 
-export default new Account();
+export default new Account()

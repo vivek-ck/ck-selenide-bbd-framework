@@ -7,21 +7,21 @@
  * 
  * Usage:
    ```
-    retryStrategy = new Retry(2, 4000);
+    retryStrategy = new Retry(2, 4000)
     await retryStrategy.retry(
         async () => {
-            await Login.open();
-            await Login.login();
+            await Login.open()
+            await Login.login()
         },
         async () => { 
-            await console.log("Executing Before Method");
-            await Login.open();
+            await console.log("Executing Before Method")
+            await Login.open()
         },
         async () => {
-            await console.log("Executing After Method");
-            await browser.reloadSession();
+            await console.log("Executing After Method")
+            await browser.reloadSession()
         }
-    );
+    )
   ```
  */
 
@@ -47,21 +47,21 @@ export default class Retry {
         let tries = 0;
         while (tries <= retries) {
             try {
-                console.log(`---------------Executing Method | Attempt: ${tries + 1}---------------`);
-                await mainMethod();
+                console.log(`---------------Executing Method | Attempt: ${tries + 1}---------------`)
+                await mainMethod()
                 break;
             } catch (err) {
                 if (tries == retries) {
                     throw `Execution Failed with ${tries + 1} attempts.`
                 }
-                console.log(err);
+                console.log(err)
 
-                console.log(`\n---------------After Method---------------`);
-                await after();
-                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries+1}---------------`);
-                await new Promise(resolve => setTimeout(resolve, retryingAfterDuration));
-                console.log(`---------------Before Method---------------`);
-                await before();
+                console.log(`\n---------------After Method---------------`)
+                await after()
+                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries+1}---------------`)
+                await new Promise(resolve => setTimeout(resolve, retryingAfterDuration))
+                console.log(`---------------Before Method---------------`)
+                await before()
             }
             tries++;
         }

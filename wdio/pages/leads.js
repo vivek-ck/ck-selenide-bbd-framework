@@ -32,7 +32,7 @@ class LeadsPage extends SalesForce {
     getPersonOpportunityLink(fullName) { return $(`//a[contains(text(), '${fullName}-')]`) }
 
     async getRandomInt(max = 10) {
-        return await Math.floor(Math.random() * max);
+        return await Math.floor(Math.random() * max)
     }
 
     async createNewLead({ firstName, lastName, email, salutation = 'Mr.', gender = 'Male', mobile = '', state = 'New South Wales' }) {
@@ -40,70 +40,70 @@ class LeadsPage extends SalesForce {
         if(rndMobile === '') {
             let num = [4];
             for(let i = 1; i <= 8; ++i) {
-                num.push(await this.getRandomInt());
+                num.push(await this.getRandomInt())
             }
-            rndMobile = num.join('');
+            rndMobile = num.join('')
         }
 
-        await this.createLeadButton.click();
+        await this.createLeadButton.click()
 
-        await this.salutationDropown.click();
-        await this.getSalutationOption(salutation).click();
+        await this.salutationDropown.click()
+        await this.getSalutationOption(salutation).click()
 
-        await this.firstNameField.setValue(firstName);
-        await this.lastNameField.setValue(lastName);
+        await this.firstNameField.setValue(firstName)
+        await this.lastNameField.setValue(lastName)
 
-        await this.jsClick(this.genderDropdown);
-        await this.getGenderOption(gender).click();
+        await this.jsClick(this.genderDropdown)
+        await this.getGenderOption(gender).click()
 
-        await this.mobilePhoneField.setValue(await rndMobile);
-        await this.emailField.setValue(email);
+        await this.mobilePhoneField.setValue(await rndMobile)
+        await this.emailField.setValue(email)
 
-        await this.dropDownLazySelect(this.borrowingInterestDropdown);
+        await this.dropDownLazySelect(this.borrowingInterestDropdown)
 
-        await this.jsClick(this.stateProvinceInput);
-        await this.getStateOption(state).click();
+        await this.jsClick(this.stateProvinceInput)
+        await this.getStateOption(state).click()
 
-        await this.dropDownLazySelect(this.leadOriginationDropdown);
-        await this.dropDownLazySelect(this.leadCategoryDropdown);
-        await this.dropDownLazySelect(this.employmentStatusDropdown);
-        await this.dropDownLazySelect(this.professionDropdown);
+        await this.dropDownLazySelect(this.leadOriginationDropdown)
+        await this.dropDownLazySelect(this.leadCategoryDropdown)
+        await this.dropDownLazySelect(this.employmentStatusDropdown)
+        await this.dropDownLazySelect(this.professionDropdown)
 
-        await this.aphraNumberField.setValue("abc123");
-        await this.pardotCommentsField.setValue("No comments");
-        await this.saveEditButton.click();
+        await this.aphraNumberField.setValue("abc123")
+        await this.pardotCommentsField.setValue("No comments")
+        await this.saveEditButton.click()
 
-        var nameHeadingText = await $(`//lightning-formatted-name[contains(text(), '${firstName} ${lastName}')]`);
-        await nameHeadingText.waitForExist({ timeout: 20000, timeoutMsg: `Element: //lightning-formatted-name[contains(text(), '${firstName} ${lastName}')] not found` });
+        var nameHeadingText = await $(`//lightning-formatted-name[contains(text(), '${firstName} ${lastName}')]`)
+        await nameHeadingText.waitForExist({ timeout: 20000, timeoutMsg: `Element: //lightning-formatted-name[contains(text(), '${firstName} ${lastName}')] not found` })
     }
 
     async changeLeadStatus(leadStatus) {
-        await browser.pause(4000);
-        await this.jsClick(this.getleadStatusButton(leadStatus));
-        await browser.pause(4000);
+        await browser.pause(4000)
+        await this.jsClick(this.getleadStatusButton(leadStatus))
+        await browser.pause(4000)
         switch (leadStatus) {
             case 'New':
-                await this.jsClick(this.markStatusAsCompleteButton);
+                await this.jsClick(this.markStatusAsCompleteButton)
                 break;
             case 'Converted':
-                await this.jsClick(this.selectConvertedStatusButton);
+                await this.jsClick(this.selectConvertedStatusButton)
                 break;
             default:
-                await this.jsClick(this.markAsCurrentStatusButton);
+                await this.jsClick(this.markAsCurrentStatusButton)
         }
     }
 
     async convertLead() {
-        await this.convertLeadPopupHeading.waitForDisplayed({ timeout: 15000 });
-        await browser.pause(2000);
-        await this.convertLeadPopupConvertButton.click();
+        await this.convertLeadPopupHeading.waitForDisplayed({ timeout: 15000 })
+        await browser.pause(2000)
+        await this.convertLeadPopupConvertButton.click()
     }
 
     async goToCreatedAccount(fullName) {
-        await this.getElementContainingExactText('Your lead has been converted').waitForDisplayed({ timeout: 40000, timeoutMsg: "Element with text: 'Your lead has been converted' was not found after 40 seconds." });
-        await this.getPersonAccountLink(fullName).click();
+        await this.getElementContainingExactText('Your lead has been converted').waitForDisplayed({ timeout: 40000, timeoutMsg: "Element with text: 'Your lead has been converted' was not found after 40 seconds." })
+        await this.getPersonAccountLink(fullName).click()
     }
 }
 
 
-export default new LeadsPage();
+export default new LeadsPage()

@@ -6,11 +6,11 @@ export default class Page {
      */
     async scrollToView(element) {
         var Element = await element;
-        await Element.waitForExist({ timeout: 15000, timeoutMsg: `${element} didn't exist after 15 seconds.` });
+        await Element.waitForExist({ timeout: 15000, timeoutMsg: `${element} didn't exist after 15 seconds.` })
 
         await browser.execute(async (el) => {
-            await el.scrollIntoView();
-        }, await Element);
+            await el.scrollIntoView()
+        }, await Element)
     }
 
     /**
@@ -19,11 +19,11 @@ export default class Page {
      */
     async jsClick(element) {
         var clickElement = await element;
-        await clickElement.waitForExist({ timeout: 15000, timeoutMsg: `${clickElement} didn't exist after 15 seconds.` });
+        await clickElement.waitForExist({ timeout: 15000, timeoutMsg: `${clickElement} didn't exist after 15 seconds.` })
 
         await browser.execute(async (el) => {
-            await el.click();
-        }, await clickElement);
+            await el.click()
+        }, await clickElement)
     }
 
     async #checkPageLoad(timeoutSec) {
@@ -36,26 +36,26 @@ export default class Page {
                 timeoutMsg: 'Page Failed To Load',
                 interval: 2000
             }
-        );
+        )
     }
 
     async waitForPageLoad(timeoutSec = 30, retries = 2) {
         let tries = 1;
         while (tries <= retries) {
             try {
-                console.log(`---------------Waiting for the page to load | Attempt: ${tries}---------------`);
-                await this.#checkPageLoad(timeoutSec);
-                console.log(`---------------Page loaded successfully---------------`);
+                console.log(`---------------Waiting for the page to load | Attempt: ${tries}---------------`)
+                await this.#checkPageLoad(timeoutSec)
+                console.log(`---------------Page loaded successfully---------------`)
                 break;
             } catch (err) {
                 if (tries == retries) {
                     throw `Page Load failed after ${tries} attempts with timeout`
                 }
-                console.log(err);
-                console.log(`---------------Retrying: ${tries}---------------`);
+                console.log(err)
+                console.log(`---------------Retrying: ${tries}---------------`)
             }
-            console.log(`---------------Refreshing Page---------------`);
-            await browser.refresh();
+            console.log(`---------------Refreshing Page---------------`)
+            await browser.refresh()
             tries++;
         }
     }
@@ -63,8 +63,8 @@ export default class Page {
     async forceReload() {
         await browser.execute(
             async () => await window.location.reload(true)
-        );
-        await this.#checkPageLoad();
+        )
+        await this.#checkPageLoad()
     }
 
 
@@ -77,16 +77,16 @@ export default class Page {
 
         while (tries <= retryStrategy.retries) {
             try {
-                console.log(`---------------Waiting for the element to be ${elementState} | Attempt: ${tries}---------------`);
+                console.log(`---------------Waiting for the element to be ${elementState} | Attempt: ${tries}---------------`)
                 switch (elementState) {
                     case 'exists':
-                        await resolvedElement.waitForExist({ timeout: duration });
+                        await resolvedElement.waitForExist({ timeout: duration })
                         break;
                     case 'clickable':
-                        await resolvedElement.waitForClickable({ timeout: duration });
+                        await resolvedElement.waitForClickable({ timeout: duration })
                         break;
                     case 'displayed':
-                        await resolvedElement.waitForDisplayed({ timeout: duration });
+                        await resolvedElement.waitForDisplayed({ timeout: duration })
                         break;
                 }
                 break;
@@ -94,12 +94,12 @@ export default class Page {
                 if (tries == retries) {
                     throw `Element not found after ${tries} attempts.`
                 }
-                console.log(err);
-                console.log(`---------------Retrying: ${tries}---------------`);
+                console.log(err)
+                console.log(`---------------Retrying: ${tries}---------------`)
             }
 
-            console.log(`---------------Refreshing Page---------------`);
-            await this.forceReload();
+            console.log(`---------------Refreshing Page---------------`)
+            await this.forceReload()
 
             // Kind of exponential backoff
             duration += 15;
@@ -110,17 +110,17 @@ export default class Page {
 
     async reloadIfElementNotClickable(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'clickable';
-        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy)
     }
 
     async reloadIfElementNotPresent(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'exists';
-        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy)
     }
 
     async reloadIfElementNotDisplayed(element, timeoutStrategy = { timeoutSec: 20, retries: 4 }) {
         let elementState = 'displayed';
-        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy);
+        await this.#reloadIfElementNotInState(element, elementState, timeoutStrategy)
     }
 
 }
