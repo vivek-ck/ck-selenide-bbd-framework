@@ -7,26 +7,27 @@
  * 
  * Usage:
    ```
-    retryStrategy = new Retry(2, 4000);
+    retryStrategy = new Retry(2, 4000)
     await retryStrategy.retry(
         async () => {
-            await Login.open();
-            await Login.login();
+            await Login.open()
+            await Login.login()
         },
         async () => { 
-            await console.log("Executing Before Method");
-            await Login.open();
+            await console.log("Executing Before Method")
+            await Login.open()
         },
         async () => {
-            await console.log("Executing After Method");
-            await browser.reloadSession();
+            await console.log("Executing After Method")
+            await browser.reloadSession()
         }
-    );
+    )
   ```
  */
 
-
 export default class Retry {
+    retryCount: number;
+    retryingAfterDuration: number;
 
     constructor(retryCount = 1, retryingAfterDuration = 5000) {
         this.retryCount = retryCount;
@@ -35,7 +36,7 @@ export default class Retry {
 
     /**
      * Asynchronously retries the main method for a specified number of attempts.
-     * 
+     *
      * @param {Function} mainMethod - The main method to be retried.
      * @param {Function} [before] - An optional function to be executed before each retry attempt.
      * @param {Function} [after] - An optional function to be executed after each failed attempt.
@@ -43,27 +44,33 @@ export default class Retry {
      * @param {number} [retryingAfterDuration=this.retryingAfterDuration] - The duration to wait between retry attempts in milliseconds.
      * @throws {string} - Throws an error if the main method fails after all retry attempts.
      */
-    async retry(mainMethod, before = () => { }, after = () => { }, retries = this.retryCount, retryingAfterDuration = this.retryingAfterDuration) {
+    async retry(
+        mainMethod: () => Promise<void>,
+        before: () => Promise<void> = async () => { },
+        after: () => Promise<void> = async () => { },
+        retries: number = this.retryCount,
+        retryingAfterDuration: number = this.retryingAfterDuration
+    ) {
         let tries = 0;
         while (tries <= retries) {
             try {
-                console.log(`---------------Executing Method | Attempt: ${tries + 1}---------------`);
-                await mainMethod();
+                console.log(`---------------Executing Method | Attempt: ${tries + 1}---------------`)
+                await mainMethod()
                 break;
             } catch (err) {
                 if (tries == retries) {
-                    throw `Execution Failed with ${tries + 1} attempts.`
+                    throw `Execution Failed with ${tries + 1} attempts.`;
                 }
-                console.log(err);
+                console.log(err)
 
-                console.log(`\n---------------After Method---------------`);
-                await after();
-                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries+1}---------------`);
-                await new Promise(resolve => setTimeout(resolve, retryingAfterDuration));
-                console.log(`---------------Before Method---------------`);
-                await before();
+                console.log(`\n---------------After Method---------------`)
+                await after()
+                console.log(`---------------Retrying after ${retryingAfterDuration} sec | Retries: ${tries + 1}---------------`)
+                await new Promise((resolve) => setTimeout(resolve, retryingAfterDuration))
+                console.log(`---------------Before Method---------------`)
+                await before()
             }
             tries++;
         }
     }
-}
+}  

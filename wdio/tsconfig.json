@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "outDir": "scripts/",
+      "types": ["node", "@wdio/globals/types", "@types/mocha"],
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "noEmitHelpers": false,
+      "module": "CommonJS",
+      "allowJs": true,
+      "target": "ESNext"
+    }
+  }
+  

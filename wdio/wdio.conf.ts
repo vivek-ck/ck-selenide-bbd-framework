@@ -5,7 +5,7 @@ export const config = {
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
-    
+
     //
     // ==================
     // Specify Test Files
@@ -23,6 +23,7 @@ export const config = {
     // will be called from there.
     //
     specs: [
+        './test/specs/**/*.ts',
         './test/specs/**/*.js'
     ],
     // Patterns to exclude.
@@ -56,11 +57,11 @@ export const config = {
         browserName: 'chrome', // or "firefox", "microsoftedge", "safari"
         "goog:chromeOptions": {
             "args": [
-              "disable-infobars",
-              "disable-popup-blocking",
-              "disable-notifications"
+                "disable-infobars",
+                "disable-popup-blocking",
+                "disable-notifications"
             ]
-          }
+        }
     }],
     //
     // ===================
@@ -110,7 +111,7 @@ export const config = {
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
     services: ['chromedriver'],
-    
+
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -133,7 +134,7 @@ export const config = {
     // see also: https://webdriver.io/docs/dot-reporter
     reporters: ['spec'],
 
-    
+
     //
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -288,4 +289,14 @@ export const config = {
     */
     // onReload: function(oldSessionId, newSessionId) {
     // }
+
+    autoCompileOpts: {
+        autoCompile: true,
+        // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
+        // for all available options
+        tsNodeOpts: {
+            transpileOnly: true,
+            project: './tsconfig.json'
+        }
+    }
 };
