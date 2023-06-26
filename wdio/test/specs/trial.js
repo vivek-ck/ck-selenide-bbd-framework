@@ -8,6 +8,7 @@ import Accounts from '../../pages/accounts.js';
 import Opportunities from '../../pages/opportunities.js';
 import Applications from '../../pages/applications.js';
 import DataStore from '../../utils/datastore.js';
+import Logout from '../../pages/logout.js';
 
 // describe("application_creation_v2", () => {
 //     it("tests application_creation_v2", async () => {
@@ -49,17 +50,16 @@ import DataStore from '../../utils/datastore.js';
 // describe("application_creation_v2", () => {
     it("tests application_creation_v2", async () => {
         await Login.open();
-        await Login.login();
+        await Login.loginAsRAuser();
 
         await Home.goTo('Applications')
         await Applications.openApplicationWithId('APP-0000001499');
         // await Applications.addCreditApprovalConditions();
         // await Applications.addCreditSettlementConditions();
-        await Applications.addTaskList();
-
-
-
-
+        // await Applications.addTaskList();
+        await Logout.logout();
+        await Login.loginAsCreditOfficer();
+        
 
         console.log('mshdgvfs')
 

@@ -10,11 +10,17 @@ class LoginPage extends Page {
         await browser.url("https://kooyonggroup--kguat2.sandbox.my.salesforce.com/");
     }
 
-    async login() {
+    async loginAsRAuser() {
         await this.username.setValue('niladri.acharya@cloudkaptan.com.kguat2.ra');
         await this.password.setValue('welcome@123');
         await this.submitBtn.click();
     }
+    async loginAsCreditOfficer() {
+        await this.username.setValue('niladri.acharya@cloudkaptan.com.kguat2.credit');
+        await this.password.setValue('welcome@123');
+        await this.submitBtn.click();
+    }
+    
 }
 
 export default new LoginPage();
