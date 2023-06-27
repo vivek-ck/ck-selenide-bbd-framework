@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export default class DataStore {
+export default class DataStore{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private static dataMap = new Map<string, any>();
 

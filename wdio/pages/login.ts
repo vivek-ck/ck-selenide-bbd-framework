@@ -18,10 +18,17 @@ class LoginPage extends SalesForce {
     await browser.maximizeWindow()
   }
 
-  async login() {
-    await this.username.setValue('niladri.acharya@cloudkaptan.com.kguat2.ra')
-    await this.password.setValue('welcome@123')
+  async login(username: string, password = 'welcome@123') {
+    await this.username.setValue(username)
+    await this.password.setValue(password)
     await this.submitBtn.click()
+  }
+
+  async loginAsRaUser() {
+    await this.login('niladri.acharya@cloudkaptan.com.kguat2.ra')
+  }
+  async loginAsCreditOfficer() {
+    await this.login('niladri.acharya@cloudkaptan.com.kguat2.credit')
   }
 }
 

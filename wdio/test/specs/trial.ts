@@ -15,7 +15,7 @@ describe("application_creation_v2", () => {
         const email = faker.internet.email();
         const fullName = `${firstName} ${lastName}`;
         await Login.open();
-        await Login.login();
+        await Login.loginAsCreditOfficer();
 
         await Home.goTo('Leads');
 
@@ -45,5 +45,31 @@ describe("application_creation_v2", () => {
         console.log('100');
     });
 });
+it("tests application_creation_v2", async () => {
+    await Login.open()
+    //await Login.loginAsRaUser()
+
+    //await Home.goTo('Applications')
+    //await Applications.openApplicationWithId('APP-0000001499')
+    // await Applications.addCreditApprovalConditions()
+    // await Applications.addCreditSettlementConditions()
+    // await Applications.addTaskList()
+    //save task step to be added
+    //proceed to next step to be added
+    //await Logout.logout()
+    await Login.loginAsCreditOfficer()
+    await Home.goTo('Applications')
+    await Applications.acceptAndOpenApplicationWithId('APP-0000001499')
+    // await Applications.openApplicationWithId('APP-0000001499')
+    // await Applications.newComment()
+    // await Applications.creditEvaluation()
+    //proceed to next to be added
+    await Applications.creditApproval()
+
+    
+
+    console.log('mshdgvfs')
+
+})
 
 //APP-0000001499
