@@ -46,8 +46,12 @@ export default class Retry {
      */
     async retry(
         mainMethod: () => Promise<void>,
-        before: () => Promise<void> = async () => { },
-        after: () => Promise<void> = async () => { },
+        before: () => Promise<void> = async () => {
+            console.log("Default before method executing")
+        },
+        after: () => Promise<void> = async () => {
+            console.log("Default before method executing")
+        },
         retries: number = this.retryCount,
         retryingAfterDuration: number = this.retryingAfterDuration
     ) {

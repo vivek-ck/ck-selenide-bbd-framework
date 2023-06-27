@@ -31,7 +31,7 @@ class LeadsPage extends SalesForce {
     getPersonAccountLink(fullName: string) { return $(`//a[contains(text(), '${fullName}')]`) }
     getPersonOpportunityLink(fullName: string) { return $(`//a[contains(text(), '${fullName}-')]`) }
 
-    async getRandomInt(max: number = 10): Promise<number> {
+    async getRandomInt(max = 10): Promise<number> {
         return Math.floor(Math.random() * max)
       }
       
@@ -46,7 +46,7 @@ class LeadsPage extends SalesForce {
       }): Promise<void> {
         let rndMobile = mobile;
         if (rndMobile === '') {
-          let num = [4];
+          const num = [4];
           for (let i = 1; i <= 8; ++i) {
             num.push(await this.getRandomInt())
           }

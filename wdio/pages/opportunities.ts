@@ -17,11 +17,11 @@ class Opportunities extends SalesForce {
   get markAsCurrentStageButton() { return $("//span[contains(text(), 'Mark as Current Stage')]") }
   get createApplicationButton() { return $("//button[text() = 'Create Application']//ancestor::li") }
 
-  applicationsCountText(count: number = 1) {
+  applicationsCountText(count = 1) {
     return $(`//span[text() = 'Applications']/following-sibling::span[text() = '(${count})']`);
   }
 
-  applicationsListLink(linkIndex: number = 1) {
+  applicationsListLink(linkIndex = 1) {
     return $(`(//h3/descendant::a/descendant::span[contains(text(), 'APP-')])[${linkIndex}]`);
   }
 
@@ -41,7 +41,7 @@ class Opportunities extends SalesForce {
     await (await this.getElementContainingExactText(`${name}-`, 'lightning-formatted-text')).waitForDisplayed();
   }
 
-  async modifyNecessaryDetails(amount: string = '80000', termDuration: string = '12'): Promise<void> {
+  async modifyNecessaryDetails(amount = '80000', termDuration = '12'): Promise<void> {
     await browser.pause(4000);
     await browser.refresh();
     await this.detailsTabButton.click();
@@ -98,7 +98,7 @@ class Opportunities extends SalesForce {
     await this.applicationsCountText(2).waitForExist();
   }
 
-  async openApplication(applicationIndex: number = 1): Promise<void> {
+  async openApplication(applicationIndex = 1): Promise<void> {
     const applicationId = await this.applicationsListLink(applicationIndex).getText();
     this.dataStore.setData('applicationId', applicationId);
     await this.jsClick(await this.applicationsListLink(applicationIndex));

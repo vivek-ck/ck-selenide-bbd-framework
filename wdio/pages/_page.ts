@@ -67,8 +67,8 @@ export default class Page {
     retryStrategy: { timeoutSec: number, retries: number }
   ) {
     let duration = retryStrategy.timeoutSec * 1000;
-    let retries = retryStrategy.retries;
-    let resolvedElement = element;
+    const retries = retryStrategy.retries;
+    const resolvedElement = element;
     let tries = 1;
 
     while (tries <= retries) {
@@ -107,21 +107,21 @@ export default class Page {
   async reloadIfElementNotClickable(element: WebdriverIO.Element,
     timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
-    let elementState = 'clickable';
+    const elementState = 'clickable';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
   }
 
   async reloadIfElementNotPresent(element: WebdriverIO.Element,
     timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
-    let elementState = 'exists';
+    const elementState = 'exists';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
   }
 
   async reloadIfElementNotDisplayed(element: WebdriverIO.Element,
     timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
-    let elementState = 'displayed';
+    const elementState = 'displayed';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
   }
 }

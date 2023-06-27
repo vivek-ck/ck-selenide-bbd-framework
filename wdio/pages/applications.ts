@@ -160,11 +160,11 @@ class Application extends SalesForce {
     }
 
     async editLoan(
-        rateType: string = 'Fixed',
-        loanPurpose: string = 'Goodwill',
-        borrowerRating: string = 'A',
-        repaymentFrequency: string = 'Monthly',
-        repaymentType: string = 'Check all'
+        rateType = 'Fixed',
+        loanPurpose = 'Goodwill',
+        borrowerRating = 'A',
+        repaymentFrequency = 'Monthly',
+        repaymentType = 'Check all'
     ): Promise<void> {
         await this.goToApplicationTabWithText('Loan')
         await this.loanEditButton.click()
@@ -194,10 +194,10 @@ class Application extends SalesForce {
 
     async addNewCollateral(
         accountOwnerName: string,
-        securityName: string = 'Testname',
-        street: string = 'Test Street',
-        suburb: string = 'Test Suburb',
-        postal: string = '888888'
+        securityName = 'Testname',
+        street = 'Test Street',
+        suburb = 'Test Suburb',
+        postal = '888888'
     ): Promise<void> {
         await this.goToApplicationTabWithText('Collateral')
         await this.reloadIfElementNotPresent(await this.getElementContainingExactText('Add New Collateral', 'span'), { timeoutSec: 15, retries: 2 })
@@ -231,7 +231,7 @@ class Application extends SalesForce {
         await this.waitUntilElementDisappears(await this.getElementContainingExactText('Save', 'span'), 30)
     }
 
-    async addParties(accountName: string, relationship: string = 'Individual Relationship', partyType: string = 'GUARANTOR'): Promise<void> {
+    async addParties(accountName: string, relationship = 'Individual Relationship', partyType = 'GUARANTOR'): Promise<void> {
         await this.goToApplicationTabWithText('Loan')
 
         // Switching to Parties Iframe from Accessibility title Iframe
@@ -307,14 +307,14 @@ class Application extends SalesForce {
         await browser.switchToParentFrame()
     }
 
-    async addCreditApprovalConditions(approvalCondition: string = 'Demo approval condition', conditionIndex: number = 1): Promise<void> {
+    async addCreditApprovalConditions(approvalCondition = 'Demo approval condition', conditionIndex = 1): Promise<void> {
         await this.goToApplicationTabWithText('Credit')
         await this.goToApplicationTabWithText('Credit Comment')
         await browser.pause(2000)
         await this.goToApplicationTabWithText('Add Approval Conditions')
 
         // The (+) button
-        let addNewQuestionButton = await this.addNewQuestionButton(1)
+        const addNewQuestionButton = await this.addNewQuestionButton(1)
 
         // Save button visibility check after clicking addNewQuestionButton
         await this.retryStrategy.retry(
@@ -342,7 +342,7 @@ class Application extends SalesForce {
         )
 
         // The input field
-        let approvalConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]")
+        const approvalConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]")
         await approvalConditionTextbox.waitForDisplayed()
         await approvalConditionTextbox.setValue(approvalCondition)
 
@@ -359,14 +359,14 @@ class Application extends SalesForce {
         await (await this.getElementContainingExactText('Add Conditions', 'div')).click()
     }
 
-    async addCreditSettlementConditions(approvalCondition: string = 'Demo Settlement condition', conditionIndex: number = 1): Promise<void> {
+    async addCreditSettlementConditions(approvalCondition = 'Demo Settlement condition', conditionIndex = 1): Promise<void> {
         await this.goToApplicationTabWithText('Credit')
         await this.goToApplicationTabWithText('Credit Comment')
         await browser.pause(2000)
         await this.goToApplicationTabWithText('Add Settlement Conditions')
 
         // The (+) button
-        let addNewQuestionButton = await this.addNewQuestionButton(2)
+        const addNewQuestionButton = await this.addNewQuestionButton(2)
 
         // Save button visibility check after clicking addNewQuestionButton
         await this.retryStrategy.retry(
@@ -395,7 +395,7 @@ class Application extends SalesForce {
         )
 
         // The input field
-        let settlementConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]")
+        const settlementConditionTextbox = await $("(//span[text()='Condition Statement']/ancestor::thead/following-sibling::tbody//textarea)[1]")
         await settlementConditionTextbox.waitForDisplayed()
         await settlementConditionTextbox.setValue(approvalCondition)
 

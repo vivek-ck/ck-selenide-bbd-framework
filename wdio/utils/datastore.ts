@@ -2,12 +2,15 @@ import fs from 'fs';
 import path from 'path';
 
 export default class DataStore {
-    private static dataMap = new Map()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private static dataMap = new Map<string, any>();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static setData(key: string, value: any): void {
         this.dataMap.set(key, value)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static getData(key: string): any {
         return this.dataMap.get(key)
     }
@@ -24,6 +27,7 @@ export default class DataStore {
         return Array.from(this.dataMap.keys())
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static getAllValues(): any[] {
         return Array.from(this.dataMap.values())
     }

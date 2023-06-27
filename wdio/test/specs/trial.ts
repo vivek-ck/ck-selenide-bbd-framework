@@ -6,7 +6,6 @@ import Login from "../../pages/login";
 import Accounts from '../../pages/accounts';
 import Opportunities from '../../pages/opportunities';
 import Applications from '../../pages/applications';
-import DataStore from '../../utils/datastore';
 
 describe("application_creation_v2", () => {
     it("tests application_creation_v2", async () => {
@@ -14,7 +13,7 @@ describe("application_creation_v2", () => {
         const firstName = faker.person.firstName();
         const lastName = faker.person.lastName();
         const email = faker.internet.email();
-        let fullName = `${firstName} ${lastName}`;
+        const fullName = `${firstName} ${lastName}`;
         await Login.open();
         await Login.login();
 
@@ -36,7 +35,7 @@ describe("application_creation_v2", () => {
         // let applicationId = 'APP-0000001543';
         // // let applicationId = await DataStore.getData('applicationId');
         // await Applications.openApplicationWithId(applicationId);
-        
+
         await Applications.editLoan();
         await Applications.addNewCollateral(fullName);
         await Applications.addParties(fullName);

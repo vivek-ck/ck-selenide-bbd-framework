@@ -15,14 +15,14 @@ export default class SalesForce extends Page {
   // Common Selectors for text
   getElementContainingExactText(
     text: string,
-    tagName: string = "*"
+    tagName = "*"
   ): Promise<WebdriverIO.Element> {
     return $(`//${tagName}[text() = "${text}"]`)
   }
 
   getElementContainingPartialText(
     text: string,
-    tagName: string = "*"
+    tagName = "*"
   ): Promise<WebdriverIO.Element> {
     return $(`//${tagName}[contains(text(),"${text}")]`)
   }
@@ -31,7 +31,7 @@ export default class SalesForce extends Page {
   getElementWithAttribute(
     attribute: string,
     attributeValue: string,
-    tagName: string = "*"
+    tagName = "*"
   ): Promise<WebdriverIO.Element> {
     return $(`//${tagName}[@${attribute} = "${attributeValue}"]`)
   }
@@ -74,7 +74,7 @@ export default class SalesForce extends Page {
 
   public async waitUntilElementDisappears(
     element: WebdriverIO.Element,
-    timeoutSec: number = 20
+    timeoutSec = 20
   ): Promise<void> {
     const readyElement = await element;
     await browser.waitUntil(async () => {
