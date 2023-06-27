@@ -422,14 +422,14 @@ class Application extends SalesForce {
         await this.formCheckBoxWithText('Application Form Sent to Borrower').waitForClickable()
         await this.formCheckBoxWithText('Application Form Sent to Borrower').click()
     }
-    async newComment(){
+    async newComment(): Promise<void> {
         await this.goToApplicationTabWithText('Credit')
         await this.goToApplicationTabWithText('Credit Comment')
         await (await this.getElementContainingExactText('New Comment', 'span')).waitForClickable()
         await (await this.getElementContainingExactText('New Comment', 'span')).click()
     }
 
-    async acceptAndOpenApplicationWithId(applicationId: string){
+    async acceptAndOpenApplicationWithId(applicationId: string): Promise<void> {
         await this.searchApplicationWithId(applicationId)
         await browser.pause(3000)
         await $('//a[@title="APP-0000001499"]/../../preceding-sibling::td[@class="slds-cell-edit cellContainer"]').waitForClickable()
@@ -442,7 +442,7 @@ class Application extends SalesForce {
         await this.reloadIfElementNotPresent(await this.getElementContainingExactText(applicationId, 'div'))
     }
 
-    async creditEvaluation(){
+    async creditEvaluation(): Promise<void> {
         await (await this.getElementWithAttribute('id', 'manage-stages', 'div')).click()
         await this.taskHamburgerButtonWithText('Credit Evaluation').waitForClickable()
         await this.taskHamburgerButtonWithText('Credit Evaluation').click()
@@ -453,7 +453,7 @@ class Application extends SalesForce {
         await $('//span[text()="Save Task"]/preceding-sibling::span').click()
 
     }
-    async creditApproval(){
+    async creditApproval(): Promise<void> {
         await this.goToApplicationTabWithText('Approvals')
         await browser.pause(3000)
         await (await this.getIframeWithAttribute('id', "approval-dashboard-iframe")).waitForExist({ timeout: 30000 })
