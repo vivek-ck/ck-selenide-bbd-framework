@@ -16,7 +16,7 @@ describe("application_creation_v2", () => {
         const email = faker.internet.email();
         let fullName = `${firstName} ${lastName}`;
         await Login.open();
-        await Login.login(); 
+        await Login.login();
 
         // await Home.goTo('Leads');
 

@@ -73,7 +73,7 @@ export default class Page {
 
     while (tries <= retries) {
       try {
-        console.log(`---------------Waiting for the element to be ${elementState} | Attempt: ${tries}---------------`)
+        console.log(`---------------Waiting ${duration} sec for the element to ${elementState} | Attempt: ${tries} ---------------`)
         switch (elementState) {
           case 'exists':
             await resolvedElement.waitForExist({ timeout: duration })
@@ -97,29 +97,29 @@ export default class Page {
       console.log(`---------------Refreshing Page---------------`)
       await this.forceReload()
 
-      // Kind of exponential backoff
-      duration += 15;
+      // Kind of exponential backoff by adding 10s each iteration to the duration
+      duration += 10000;
 
       tries++;
     }
   }
 
   async reloadIfElementNotClickable(element: WebdriverIO.Element,
-    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 15, retries: 4 }
+    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
     let elementState = 'clickable';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
   }
 
   async reloadIfElementNotPresent(element: WebdriverIO.Element,
-    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 15, retries: 4 }
+    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
     let elementState = 'exists';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
   }
 
   async reloadIfElementNotDisplayed(element: WebdriverIO.Element,
-    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 15, retries: 4 }
+    timeoutStrategy: { timeoutSec: number, retries: number } = { timeoutSec: 10, retries: 4 }
   ) {
     let elementState = 'displayed';
     await this.reloadIfElementNotInState(element, elementState, timeoutStrategy)
