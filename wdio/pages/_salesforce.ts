@@ -4,13 +4,13 @@ import Page from "./_page";
 import { Key } from "webdriverio";
 
 export default class SalesForce extends Page {
-  
+
   // Retry strategy initialization
   private retrystrategy = new Retry(1, 2000)
   get retryStrategy() { return this.retrystrategy }
 
   // DataStorage initialization
-  get dataStore() {return DataStore} 
+  get dataStore() { return DataStore }
 
   // Common Selectors for text
   getElementContainingExactText(
@@ -74,7 +74,7 @@ export default class SalesForce extends Page {
 
   public async waitUntilElementDisappears(
     element: WebdriverIO.Element,
-    timeoutSec = 20
+    timeoutSec: number = 20
   ): Promise<void> {
     const readyElement = await element;
     await browser.waitUntil(async () => {
@@ -83,5 +83,13 @@ export default class SalesForce extends Page {
       timeout: timeoutSec * 1000,
       timeoutMsg: `Element with selector ${readyElement.selector} didn't disappear in the given time: ${timeoutSec} sec`,
     })
+  }
+
+  public async logout(): Promise<void> {
+    await browser.switchToFrame(null);
+    await browser.pause(5000);
+    await this.jsClick(await $("//img[@title='User']"));
+    await (await $("//a[text()='Log Out']")).waitForDisplayed();
+    await this.jsClick(await $("//a[text()='Log Out']"));
   }
 }

@@ -98,7 +98,7 @@ class Application extends SalesForce {
      */
     formCheckBoxWithText(text: string) { return $(`//div[text()='${text}']/ancestor::td/preceding-sibling::td//input`) }
 
-
+    taskHamburgerButtonWithText(text: string) { return $(`//div[text()='${text}']/ancestor::div[@class='nx-queue-item-inner-with-icon']/preceding-sibling::div//i`) }
 
     // Async methods
     async searchApplicationWithId(applicationId: string): Promise<void> {
@@ -415,12 +415,66 @@ class Application extends SalesForce {
 
     async addTaskList(): Promise<void> {
         await (await this.getElementWithAttribute('id', 'manage-stages', 'div')).click()
-        await this.originationHamburgerButton.waitForClickable()
-        await this.originationHamburgerButton.click()
+        await this.taskHamburgerButtonWithText('Origination').waitForClickable()
+        await this.taskHamburgerButtonWithText('Origination').click()
         await this.formCheckBoxWithText('Privacy form sent to Borrower').waitForClickable()
         await this.formCheckBoxWithText('Privacy form sent to Borrower').click()
         await this.formCheckBoxWithText('Application Form Sent to Borrower').waitForClickable()
         await this.formCheckBoxWithText('Application Form Sent to Borrower').click()
+    }
+    async newComment(): Promise<void> {
+        await this.goToApplicationTabWithText('Credit')
+        await this.goToApplicationTabWithText('Credit Comment')
+        await (await this.getElementContainingExactText('New Comment', 'span')).waitForClickable()
+        await (await this.getElementContainingExactText('New Comment', 'span')).click()
+    }
+
+    async acceptAndOpenApplicationWithId(applicationId: string): Promise<void> {
+        await this.searchApplicationWithId(applicationId)
+        await browser.pause(3000)
+        await $('//a[@title="APP-0000001499"]/../../preceding-sibling::td[@class="slds-cell-edit cellContainer"]').waitForClickable()
+        await $('//a[@title="APP-0000001499"]/../../preceding-sibling::td[@class="slds-cell-edit cellContainer"]').click()
+        await this.getElementContainingExactText('Accept Application')
+        await browser.pause(3000)
+        await (await this.getElementContainingExactText(`${applicationId}`, 'a')).click()
+        await (await this.getIframeWithAttribute('title', "accessibility title")).waitForExist({ timeout: 30000 })
+        await browser.switchToFrame(await this.getIframeWithAttribute('title', "accessibility title"))
+        await this.reloadIfElementNotPresent(await this.getElementContainingExactText(applicationId, 'div'))
+    }
+
+    async creditEvaluation(): Promise<void> {
+        await (await this.getElementWithAttribute('id', 'manage-stages', 'div')).click()
+        await this.taskHamburgerButtonWithText('Credit Evaluation').waitForClickable()
+        await this.taskHamburgerButtonWithText('Credit Evaluation').click()
+        await browser.pause(3000)
+        await this.formCheckBoxWithText('Credit Assessment Completed').waitForClickable()
+        await this.formCheckBoxWithText('Credit Assessment Completed').click()
+        await $('//span[text()="Save Task"]/preceding-sibling::span').waitForDisplayed()
+        await $('//span[text()="Save Task"]/preceding-sibling::span').click()
+
+    }
+    async creditApproval(): Promise<void> {
+        await this.goToApplicationTabWithText('Approvals')
+        await browser.pause(3000)
+        await (await this.getIframeWithAttribute('id', "approval-dashboard-iframe")).waitForExist({ timeout: 30000 })
+        await browser.switchToFrame(await this.getIframeWithAttribute('id', "approval-dashboard-iframe"))
+        await browser.pause(3000)
+        await (await this.getElementWithAttribute('class', 'sk-icon fa-edit  inline nx-skootable-buttonicon-visible', 'i')).waitForDisplayed()
+        await (await this.getElementWithAttribute('class', 'sk-icon fa-edit  inline nx-skootable-buttonicon-visible', 'i')).click()
+        await (await this.getElementWithAttribute('class', 'sk-icon fa-external-link  inline nx-skootable-buttonicon-visible', 'i')).waitForDisplayed()
+        await (await this.getElementWithAttribute('class', 'sk-icon fa-external-link  inline nx-skootable-buttonicon-visible', 'i')).click()
+        await browser.pause(5000)
+        await browser.switchToParentFrame()
+        let reviewCommentIframe = await $("//iframe[contains(@src, 'page=ApprovalReview')]")
+        await reviewCommentIframe.waitForExist({ timeout: 30000 })
+        await browser.switchToFrame(reviewCommentIframe)
+        await $('//div[text()="Review Comments"]/../../following-sibling::div//textarea').waitForDisplayed()
+        await $('//div[text()="Review Comments"]/../../following-sibling::div//textarea').setValue('Approved')
+        await (await this.getElementContainingExactText('Approve', 'span')).waitForClickable()
+        await (await this.getElementContainingExactText('Approve', 'span')).click()
+        await browser.pause(2000)
+        await $('//span[@class="ui-button-icon-primary ui-icon fa-check-square-o sk-icon inline"]/..').waitForClickable()
+        await $('//span[@class="ui-button-icon-primary ui-icon fa-check-square-o sk-icon inline"]/..').click()
     }
 
 }
