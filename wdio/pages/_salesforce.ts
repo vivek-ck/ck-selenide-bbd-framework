@@ -86,10 +86,10 @@ export default class SalesForce extends Page {
   }
 
   public async logout(): Promise<void> {
-    await browser.switchToFrame(null);
-    await browser.pause(5000);
-    await this.jsClick(await $("//img[@title='User']"));
-    await (await $("//a[text()='Log Out']")).waitForDisplayed();
-    await this.jsClick(await $("//a[text()='Log Out']"));
+    await browser.switchToFrame(null)
+    await browser.pause(5000)
+    await this.jsClick(await $("//img[@title='User']"))
+    await (await $("//a[text()='Log Out']")).waitForDisplayed()
+    await this.jsClick(await $("//a[text()='Log Out']"))
   }
 }

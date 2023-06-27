@@ -3,7 +3,7 @@ import path from 'path';
 
 export default class DataStore{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private static dataMap = new Map<string, any>();
+    private static dataMap = new Map<string, any>()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     static setData(key: string, value: any): void {

@@ -18,62 +18,62 @@ class Opportunities extends SalesForce {
   get createApplicationButton() { return $("//button[text() = 'Create Application']//ancestor::li") }
 
   applicationsCountText(count = 1) {
-    return $(`//span[text() = 'Applications']/following-sibling::span[text() = '(${count})']`);
+    return $(`//span[text() = 'Applications']/following-sibling::span[text() = '(${count})']`)
   }
 
   applicationsListLink(linkIndex = 1) {
-    return $(`(//h3/descendant::a/descendant::span[contains(text(), 'APP-')])[${linkIndex}]`);
+    return $(`(//h3/descendant::a/descendant::span[contains(text(), 'APP-')])[${linkIndex}]`)
   }
 
   oppuortunitiesStageButton(leadStatus: string) {
-    return $(`//span[text() = '${leadStatus}']`);
+    return $(`//span[text() = '${leadStatus}']`)
   }
 
   async searchOpportunity(name: string): Promise<void> {
-    await this.opportunitiesSearchField.setValue(`${name}\n`);
+    await this.opportunitiesSearchField.setValue(`${name}\n`)
   }
 
   async openOpportunityWithName(name: string): Promise<void> {
-    await browser.pause(2000);
-    await this.searchOpportunity(name);
-    await (await this.getElementContainingExactText(`${name}-`, 'a')).waitForDisplayed();
-    await (await this.getElementContainingExactText(`${name}-`, 'a')).click();
-    await (await this.getElementContainingExactText(`${name}-`, 'lightning-formatted-text')).waitForDisplayed();
+    await browser.pause(2000)
+    await this.searchOpportunity(name)
+    await (await this.getElementContainingExactText(`${name}-`, 'a')).waitForDisplayed()
+    await (await this.getElementContainingExactText(`${name}-`, 'a')).click()
+    await (await this.getElementContainingExactText(`${name}-`, 'lightning-formatted-text')).waitForDisplayed()
   }
 
   async modifyNecessaryDetails(amount = '80000', termDuration = '12'): Promise<void> {
-    await browser.pause(4000);
-    await browser.refresh();
-    await this.detailsTabButton.click();
-    await (await this.getElementContainingPartialText('Please make sure the mandatory fields are filled up', 'span')).waitForExist();
+    await browser.pause(4000)
+    await browser.refresh()
+    await this.detailsTabButton.click()
+    await (await this.getElementContainingPartialText('Please make sure the mandatory fields are filled up', 'span')).waitForExist()
 
-    await this.jsClick(await this.editLoanTypeButton);
-    await this.saveEditButton.waitForExist({ timeout: 20000 });
+    await this.jsClick(await this.editLoanTypeButton)
+    await this.saveEditButton.waitForExist({ timeout: 20000 })
 
-    await this.amountField.setValue(amount);
-    await this.termField.setValue(termDuration);
+    await this.amountField.setValue(amount)
+    await this.termField.setValue(termDuration)
 
-    await (await this.relationshipAssociateDropdown).waitForClickable();
-    await this.relationshipAssociateDropdown.click();
-    await this.relationshipAssociateDropdown.setValue('Niladri Acharya - RA');
+    await (await this.relationshipAssociateDropdown).waitForClickable()
+    await this.relationshipAssociateDropdown.click()
+    await this.relationshipAssociateDropdown.setValue('Niladri Acharya - RA')
 
-    await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).waitForDisplayed();
-    await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).click();
+    await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).waitForDisplayed()
+    await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).click()
 
-    await this.dropDownSelectByText(await this.loanTypeDropdown, 'Business Equipment Loan');
-    await this.dropDownLazySelect(await this.assetTypeDropdown);
-    await this.dropDownLazySelect(await this.clientTypeDropdown);
-    await this.dropDownLazySelect(await this.transactionTypeDropdown);
-    await this.dropDownLazySelect(await this.loanUseDropdown);
-    await this.dropDownLazySelect(await this.lenderDropdown);
+    await this.dropDownSelectByText(await this.loanTypeDropdown, 'Business Equipment Loan')
+    await this.dropDownLazySelect(await this.assetTypeDropdown)
+    await this.dropDownLazySelect(await this.clientTypeDropdown)
+    await this.dropDownLazySelect(await this.transactionTypeDropdown)
+    await this.dropDownLazySelect(await this.loanUseDropdown)
+    await this.dropDownLazySelect(await this.lenderDropdown)
 
-    await this.saveEditButton.click();
+    await this.saveEditButton.click()
   }
 
   async setOppuortunityStatus(oppStatus: string): Promise<void> {
-    await browser.pause(4000);
-    await this.jsClick(await this.oppuortunitiesStageButton(oppStatus));
-    await browser.pause(2000);
+    await browser.pause(4000)
+    await this.jsClick(await this.oppuortunitiesStageButton(oppStatus))
+    await browser.pause(2000)
     switch (oppStatus) {
       case 'New':
         // Add the respective operation
@@ -82,37 +82,37 @@ class Opportunities extends SalesForce {
         // Add the respective operation
         break;
       default:
-        await this.jsClick(await this.markAsCurrentStageButton);
+        await this.jsClick(await this.markAsCurrentStageButton)
     }
   }
 
   async createApplication(): Promise<void> {
-    await this.setOppuortunityStatus('Preparing application');
-    await browser.pause(2000);
-    await this.createApplicationButton.click();
-    await browser.pause(2000);
-    await this.waitUntilElementDisappears(await this.getElementContainingExactText('Create Application', 'h2'), 40000);
+    await this.setOppuortunityStatus('Preparing application')
+    await browser.pause(2000)
+    await this.createApplicationButton.click()
+    await browser.pause(2000)
+    await this.waitUntilElementDisappears(await this.getElementContainingExactText('Create Application', 'h2'), 40000)
 
-    await this.waitForPageLoad();
-    await browser.pause(2000);
-    await this.applicationsCountText(2).waitForExist();
+    await this.waitForPageLoad()
+    await browser.pause(2000)
+    await this.applicationsCountText(2).waitForExist()
   }
 
   async openApplication(applicationIndex = 1): Promise<void> {
-    const applicationId = await this.applicationsListLink(applicationIndex).getText();
-    this.dataStore.setData('applicationId', applicationId);
-    await this.jsClick(await this.applicationsListLink(applicationIndex));
-    await browser.pause(1000);
-    await this.waitForPageLoad();
-    await (await this.getIframeWithAttribute('title', 'accessibility title')).waitForExist();
-    const iframe = await this.getIframeWithAttribute('title', 'accessibility title');
-    await browser.switchToFrame(iframe);
-    await this.reloadIfElementNotPresent(await this.getElementContainingExactText(applicationId, 'div'));
+    const applicationId = await this.applicationsListLink(applicationIndex).getText()
+    this.dataStore.setData('applicationId', applicationId)
+    await this.jsClick(await this.applicationsListLink(applicationIndex))
+    await browser.pause(1000)
+    await this.waitForPageLoad()
+    await (await this.getIframeWithAttribute('title', 'accessibility title')).waitForExist()
+    const iframe = await this.getIframeWithAttribute('title', 'accessibility title')
+    await browser.switchToFrame(iframe)
+    await this.reloadIfElementNotPresent(await this.getElementContainingExactText(applicationId, 'div'))
   }
 
   async createAndOpenApplication(): Promise<void> {
-    await this.createApplication();
-    await this.openApplication(2);
+    await this.createApplication()
+    await this.openApplication(2)
   }
 }
 
