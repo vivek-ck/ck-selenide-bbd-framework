@@ -1,7 +1,7 @@
 {
-    "name": "webdriverio-project",
+    "name": "webdriverio-automation",
     "version": "1.0.0",
-    "description": "Example project using WebdriverIO (wdio)",
+    "description": "WebdriverIO Automation",
     "scripts": {
         "test": "wdio wdio.conf.ts",
         "wdio": "wdio run ./wdio.conf.ts"
