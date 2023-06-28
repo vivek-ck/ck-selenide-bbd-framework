@@ -64,8 +64,9 @@ it("tests application_creation_v2", async () => {
     // await Applications.newComment()
     // await Applications.creditEvaluation()
     //proceed to next to be added
-    await Applications.creditApproval()
-
+    // await Applications.creditApproval()
+    // await Applications.generateDoc()
+    await Applications.answerApprovalConditions()
     
 
     console.log('mshdgvfs')

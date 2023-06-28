@@ -477,6 +477,44 @@ class Application extends SalesForce {
         await $('//span[@class="ui-button-icon-primary ui-icon fa-check-square-o sk-icon inline"]/..').click()
     }
 
+    async generateDoc(): Promise<void> {
+        await this.goToApplicationTabWithText('Documents')
+        await this.goToApplicationTabWithText('Generate Documents')
+        await (await this.getElementContainingExactText('Generate Conditional Approval Document', 'span')).waitForClickable()
+        await (await this.getElementContainingExactText('Generate Conditional Approval Document', 'span')).click()
+        await this.waitUntilElementDisappears(await $("//div[text() = 'Generate Documents']//ancestor::li"), 50000)
+        await (await this.getIframeWithAttribute('title', "accessibility title")).waitForExist({ timeout: 30000 })
+        await browser.switchToFrame(await this.getIframeWithAttribute('title', "accessibility title"))
+        await $("//div[text() = 'Generate Documents']//ancestor::li").waitForDisplayed({ timeout: 40000 })
+    }
+//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox']
+
+    async answerApprovalConditions(): Promise<void> {
+        await this.goToApplicationTabWithText('Credit')
+        await this.goToApplicationTabWithText('Add Settlement Conditions')
+        await this.goToApplicationTabWithText('Add Approval Conditions')
+        const editConditionButtons = await $$('//div[contains(text(),"Add Approval conditions")]/ancestor::div[@class="sk-wrapper"]//div[@id="questionTable"]//tbody//tr//div[@title="Edit Row"]')
+        for(const editConditionButton of editConditionButtons){
+            // editConditionButton.click()
+            let index = 1;
+            const checkbox = await $(`(//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox']
+            )[${index}]`)
+            const savebutton = await $(`(//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//div[@title="Save"])[${index}]`)
+            // const ifSelected = await checkbox.isSelected()
+            const contentOfBox = await savebutton.getCSSProperty('content')
+            console.log(contentOfBox)
+            const ifSelected = JSON.stringify(contentOfBox).includes('::after')
+
+            if(!ifSelected){
+                editConditionButton.click()
+                checkbox.click()
+                savebutton.click()
+            }
+            index++;
+
+        }
+    }
+
 }
 
 

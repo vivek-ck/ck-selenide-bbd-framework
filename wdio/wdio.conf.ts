@@ -59,7 +59,9 @@ export const config = {
             "args": [
                 "disable-infobars",
                 "disable-popup-blocking",
-                "disable-notifications"
+                "disable-notifications",
+                "disable-web-security",
+                "remote-allow-origins=*"
             ]
         }
     }],
