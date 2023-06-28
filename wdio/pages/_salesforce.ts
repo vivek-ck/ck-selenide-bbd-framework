@@ -54,10 +54,10 @@ export default class SalesForce extends Page {
 
   public async dropDownLazySelect(element: WebdriverIO.Element): Promise<void> {
     await this.jsClick(await element)
-    await browser.pause(200)
+    await browser.pause(500)
     await browser.keys([Key.ArrowDown])
     await browser.keys([Key.Enter])
-    await browser.pause(200)
+    await browser.pause(500)
   }
 
   public async dropDownSelectByText(
