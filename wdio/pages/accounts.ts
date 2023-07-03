@@ -21,9 +21,11 @@ class Account extends SalesForce {
         await this.jsClick(await this.editBirthdateButton)
         await this.saveEditButton.waitForExist({ timeout: 20000 })
         await this.birthdateField.setValue(date)
+        await browser.pause(2000)
         await this.dropDownLazySelect(await this.ageRangeDropdown)
+        await browser.pause(2000)
         await this.jsClick(await this.saveEditButton)
-        await browser.pause(4000)
+        await browser.pause(6000)
     }
 }
 

@@ -13,10 +13,15 @@
         "allowJs": true,                // Allows JavaScript files to be included and compiled
         "target": "ESNext",             // Specifies the ECMAScript version for transpilation
         "strict": true,                 // Enables strict type checking
-        "noImplicitAny": true,          // Raises error on expressions and declarations with an implied 'any' type
+        "noImplicitAny": false,          // Raises error on expressions and declarations with an implied 'any' type
         "lib": [                        // List of library files to be included
             "es6",
             "dom"
         ]
-    }
+    },
+    "include": [
+        "pages/**/*.ts",
+        "test/**/*.ts",
+        "utils/**/*.ts"
+    ]
 }

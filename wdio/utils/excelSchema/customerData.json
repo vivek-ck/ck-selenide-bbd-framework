@@ -1,0 +1,19 @@
+{
+    "Scenario Number": "scenarioNumber",
+    "Product": "product",
+    "Guarantor2": "guarantor",
+    "Repayment Type": "repaymentType",
+    "Rate Type2": "rateType",
+    "Balloon": "balloon",
+    "Borrower rating": "borrowerRating",
+    "Security Types/Asset Type": "securityTypes",
+    "Loan Purpose": "loanPurpose",
+    "Loan Use": "loanUse",
+    "Term (months)": "termMonths",
+    "Amount": "amount",
+    "Approval Conditions": "approvalConditions",
+    "Settlement Conditions": "settlementConditions",
+    "Fees": "fees",
+    "Credit Comments": "creditComments",
+    "Ops Comments": "opsComments"
+}
