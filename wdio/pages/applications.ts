@@ -11,6 +11,7 @@ class Application extends SalesForce {
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
     get saveNewButton() { return $("//textarea/ancestor::td/preceding-sibling::td//div[@title='Save New' or @title = 'Save' or @title='Save new']") }
     get originationHamburgerButton() { return $("//div[text()='Origination']/ancestor::div[@class='nx-queue-item-inner-with-icon']/preceding-sibling::div//i") }
+    get taskSaveButton() { return $("//span[text()='Save Task']/preceding-sibling::span") }
 
 
 
@@ -169,10 +170,10 @@ class Application extends SalesForce {
         await this.goToApplicationTabWithText('Loan')
         await this.loanEditButton.click()
         await (await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div')).waitForDisplayed()
-        await browser.pause(5000)
         await this.rateTypeDropdown.selectByAttribute('value', rateType)
         await this.selectLoanPurpose(loanPurpose)
         await this.selectBorrowerRating(borrowerRating)
+        await this.rateTypeDropdown.selectByAttribute('value', rateType)
         await this.repaymentFrequencyDropdown.selectByAttribute('value', repaymentFrequency)
         await this.repaymentTypeButton.click()
         await this.typeOption(repaymentType).click()
@@ -183,7 +184,8 @@ class Application extends SalesForce {
 
         const pricingCard = await this.getElementWithAttribute('id', 'pricingOptionCard', 'div')
         await pricingCard.waitForDisplayed({ timeout: 30000 })
-        await pricingCard.click()
+        await browser.pause(5000)
+        await this.jsClick(pricingCard)
 
         await (await this.getElementContainingExactText('Yes', 'span')).click()
         await (await this.getElementContainingExactText('Pricing option is selected successfully.')).waitForDisplayed({ timeout: 30000 })
@@ -298,6 +300,7 @@ class Application extends SalesForce {
         const saveButton = await $("//div[@role='button']/span[text()='Save']")
         await electronicConsent.click()
         await creditCheckConsent.click()
+        await browser.pause(5000)
         await saveButton.click()
 
         // Waiting for Party to be saved
@@ -320,8 +323,9 @@ class Application extends SalesForce {
         await this.retryStrategy.retry(
             // Main method
             async () => {
-                await addNewQuestionButton.waitForDisplayed({ timeout: 25000 })
+                await addNewQuestionButton.waitForClickable({ timeout: 25000 })
                 await addNewQuestionButton.click()
+                await browser.pause(2000)
                 await this.saveNewButton.waitForDisplayed({ timeout: 10000 })
             },
 
@@ -372,9 +376,10 @@ class Application extends SalesForce {
         await this.retryStrategy.retry(
             // Main method
             async () => {
-                await addNewQuestionButton.waitForDisplayed({ timeout: 25000 })
                 await browser.pause(2000)
+                await addNewQuestionButton.waitForDisplayed({ timeout: 25000 })
                 await addNewQuestionButton.click()
+                await browser.pause(2000)
                 await this.saveNewButton.waitForDisplayed({ timeout: 10000 })
             },
 
@@ -413,7 +418,8 @@ class Application extends SalesForce {
         await this.waitUntilElementDisappears(await this.getElementContainingExactText('Adding settlement condition'))
     }
 
-    async addTaskList(): Promise<void> {
+    async addTaskListOrigination(): Promise<void> {
+        await (await this.getElementWithAttribute('id', 'manage-stages', 'div')).waitForClickable()
         await (await this.getElementWithAttribute('id', 'manage-stages', 'div')).click()
         await this.taskHamburgerButtonWithText('Origination').waitForClickable()
         await this.taskHamburgerButtonWithText('Origination').click()
@@ -421,6 +427,8 @@ class Application extends SalesForce {
         await this.formCheckBoxWithText('Privacy form sent to Borrower').click()
         await this.formCheckBoxWithText('Application Form Sent to Borrower').waitForClickable()
         await this.formCheckBoxWithText('Application Form Sent to Borrower').click()
+        await this.taskSaveButton.waitForClickable()
+        await this.taskSaveButton.click()
     }
     async newComment(): Promise<void> {
         await this.goToApplicationTabWithText('Credit')
@@ -487,32 +495,42 @@ class Application extends SalesForce {
         await browser.switchToFrame(await this.getIframeWithAttribute('title', "accessibility title"))
         await $("//div[text() = 'Generate Documents']//ancestor::li").waitForDisplayed({ timeout: 40000 })
     }
-//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox']
+    //div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox']
 
     async answerApprovalConditions(): Promise<void> {
         await this.goToApplicationTabWithText('Credit')
-        await this.goToApplicationTabWithText('Add Settlement Conditions')
+        await this.goToApplicationTabWithText('Credit Comment')
+        await browser.pause(3000)
         await this.goToApplicationTabWithText('Add Approval Conditions')
+        await $('(//div[contains(text(),"Add Approval conditions")]/ancestor::div[@class="sk-wrapper"]//div[@id="questionTable"]//tbody//tr//div[@title="Edit Row"])[1]').waitForExist();
         const editConditionButtons = await $$('//div[contains(text(),"Add Approval conditions")]/ancestor::div[@class="sk-wrapper"]//div[@id="questionTable"]//tbody//tr//div[@title="Edit Row"]')
-        for(const editConditionButton of editConditionButtons){
+        let index = 1;
+        for (const editConditionButton of editConditionButtons) {
             // editConditionButton.click()
-            let index = 1;
-            const checkbox = await $(`(//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox']
-            )[${index}]`)
+            await browser.pause(3000)
+            const checkbox = await $(`(//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//input[@type='checkbox'])[${index}]`)
             const savebutton = await $(`(//div[contains(text(),'Add Approval conditions')]/ancestor::div[@class='sk-wrapper']//div[@id='questionTable']//tbody//tr//div[@title="Save"])[${index}]`)
-            // const ifSelected = await checkbox.isSelected()
-            const contentOfBox = await savebutton.getCSSProperty('content')
-            console.log(contentOfBox)
-            const ifSelected = JSON.stringify(contentOfBox).includes('::after')
+            const ifSelected = await browser.execute("return arguments[0].checked;", checkbox);
 
-            if(!ifSelected){
-                editConditionButton.click()
-                checkbox.click()
-                savebutton.click()
+            if (!ifSelected) {
+                await editConditionButton.waitForClickable()
+                await editConditionButton.click()
+                await checkbox.waitForClickable()
+                await checkbox.click()
+                await browser.pause(2000)
+                await savebutton.waitForClickable()
+                await browser.pause(5000)
+                // await this.jsClick(savebutton)
+                await savebutton.click()
             }
             index++;
-
         }
+    }
+
+    async proceedToNext(): Promise<void> {
+        await browser.pause(4000)
+        await (await this.getElementContainingExactText('Proceed To Next Status', 'span')).waitForClickable()
+        await (await this.getElementContainingExactText('Proceed To Next Status', 'span')).click()
     }
 
 }
