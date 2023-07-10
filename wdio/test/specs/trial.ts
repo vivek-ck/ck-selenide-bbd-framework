@@ -43,7 +43,7 @@ describe("application_creation_v2", async () => {
             const firstName = faker.person.firstName();
             const lastName = faker.person.lastName();
             const email = faker.internet.email();
-            const fullName = `${firstName} ${lastName}`;
+            let fullName = `${firstName} ${lastName}`;
 
             await Login.open();
             await Home.goTo('Leads');
@@ -57,10 +57,12 @@ describe("application_creation_v2", async () => {
             await Accounts.editBirthDate('01/01/2000');
             await Accounts.goTo('Opportunities');
             await Opportunities.openOpportunityWithName(fullName);
-            await Opportunities.modifyNecessaryDetails(product, amount, termMonths, loanUse);
+            await Opportunities.modifyNecessaryDetails({ loanType: product, amount: amount, termDuration: termMonths, loanUse: loanUse, assetType: securityTypes })
             await Opportunities.createAndOpenApplication();
 
-            await Applications.editLoan();
+            // await Home.goTo("Applications");
+            // await Applications.openApplicationWithId("APP-0000001581")
+            await Applications.editLoan({ rateType: rateType, balloonAmount: balloon, borrowerRating: borrowerRating, repaymentTypes: repaymentType, loanPurpose: loanPurpose });
             await Applications.addNewCollateral(fullName);
             await Applications.addParties(fullName);
         });

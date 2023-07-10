@@ -11,7 +11,10 @@ class Application extends SalesForce {
     get ownershipPercentage() { return $("//tr[@class='nx-item']//input[@inputmode='numeric']") }
     get saveNewButton() { return $("//textarea/ancestor::td/preceding-sibling::td//div[@title='Save New' or @title = 'Save' or @title='Save new']") }
     get originationHamburgerButton() { return $("//div[text()='Origination']/ancestor::div[@class='nx-queue-item-inner-with-icon']/preceding-sibling::div//i") }
-
+    get balloonAmount() { return $("//div[text() = 'Balloon Amount']/../following-sibling::div/input") }
+    get repaymentTermMonth() { return $("//div[text() = 'Term']/../following-sibling::div/input") }
+    get loanAmount() { return $("//div[text() = 'Loan Amount /LOC Drawdown Amount']/../following-sibling::div/input") }
+    get loanUseDropdown() { return $("//div[text() = 'Loan Use']/../following-sibling::div/select") }
 
 
     //iframe[@id ='party-iframe'] {child of "accessibility title"}
@@ -28,12 +31,12 @@ class Application extends SalesForce {
 
     /**
      * Returns the chain icon element associated with the search result for a given loan purpose option text.
-     *
+     * This takes cares of case sensitivity
+     * 
      * @param {string} searchValue - The text used to search for the loan purpose option.
      * @returns {string} - The chain icon element corresponding to the search result.
      */
-    searchResultLink(searchValue: string) { return $(`//div[text() = '${searchValue}']/ancestor::td/preceding-sibling::td`) }
-
+    searchResultLink(searchValue: string) { return $(`//div[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ', 'abcdefghijklmnopqrstuvwxyz '), '${searchValue.toLowerCase()}')]/ancestor::td/preceding-sibling::td`) }
     /**
      * Returns the label element associated with the given repayment type text.
      *
@@ -137,7 +140,7 @@ class Application extends SalesForce {
         await this.jsClick(await this.searchButton(searchButtonType.BORROWER_RATING))
         await (await this.searchResultLink(ratingText)).waitForDisplayed()
         await browser.pause(1000)
-        await this.searchResultLink(ratingText).click()
+        await $(`//div[text() = '${ratingText}']/ancestor::td/preceding-sibling::td`).click()
         await browser.pause(2000)
     }
 
@@ -159,23 +162,72 @@ class Application extends SalesForce {
         await browser.pause(2000)
     }
 
+    private resolveRepaymentType(repaymentType: string): string {
+        switch (repaymentType) {
+            case "P & I":
+            case "P&I":
+                return "P & I"
+            case "IO":
+            case "io":
+            case "Io":
+                return "IO"
+            case "Revolving":
+                return "Revolving"
+            case "Balloon":
+                return "Balloon"
+            case "Capitalised interest":
+            case "Capitalised Interest":
+                return "Capitalised interest"
+            case "Uncheck all":
+            case "Uncheck All":
+                return "Uncheck all"
+            case "Check all":
+            case "Check All":
+                return "Check all"
+            default:
+                console.log(`Repayment Type '${repaymentType}' did not match any cases, if new add the case. \nUsing: 'Checking All'`)
+        }
+        return "Check all"
+    }
+
+    private async selectRepaymentType(repaymentTypes: string) {
+        await this.repaymentTypeButton.click()
+        await this.typeOption("Uncheck all").click()
+        //The excel must have repaymentTypes seperated by '+' in case of multiple options
+        for (let repaymentType of repaymentTypes.split('+')) {
+            let type = this.resolveRepaymentType(repaymentType.trim())
+            await this.typeOption(type).click()
+            await browser.pause(500)
+        }
+    }
+
     async editLoan(
-        rateType = 'Fixed',
-        loanPurpose = 'Goodwill',
-        borrowerRating = 'A',
-        repaymentFrequency = 'Monthly',
-        repaymentType = 'Check all'
+        { 
+            rateType = 'Fixed',
+            balloonAmount = '10,000.00',
+            loanPurpose = 'Goodwill',
+            borrowerRating = 'A',
+            repaymentFrequency = 'Monthly',
+            repaymentTypes = 'Check all'
+        }
     ): Promise<void> {
         await this.goToApplicationTabWithText('Loan')
         await this.loanEditButton.click()
         await (await this.getElementWithAttribute('id', 'AppDetailTitleHeader', 'div')).waitForDisplayed()
         await browser.pause(5000)
+
         await this.rateTypeDropdown.selectByAttribute('value', rateType)
+
+        await this.balloonAmount.setValue(balloonAmount)
+
         await this.selectLoanPurpose(loanPurpose)
+
         await this.selectBorrowerRating(borrowerRating)
+
         await this.repaymentFrequencyDropdown.selectByAttribute('value', repaymentFrequency)
-        await this.repaymentTypeButton.click()
-        await this.typeOption(repaymentType).click()
+
+        await this.selectRepaymentType(repaymentTypes)
+
         await this.generatePricing.click()
         const pricingButton = await this.getElementWithAttribute('id', 'pricing-button', 'div')
         await pricingButton.waitForDisplayed({ timeout: 30000 })
