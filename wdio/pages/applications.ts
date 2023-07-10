@@ -202,7 +202,7 @@ class Application extends SalesForce {
     }
 
     async editLoan(
-        { 
+        {
             rateType = 'Fixed',
             balloonAmount = '10,000.00',
             loanPurpose = 'Goodwill',
@@ -229,6 +229,15 @@ class Application extends SalesForce {
         await this.selectRepaymentType(repaymentTypes)
 
         await this.generatePricing.click()
+
+        try {
+            console.log("Checking if any Dialog box appears, for any change made.")
+            let saveChangesYes = $("//div[@role='dialog']//span[text() = 'Yes']")
+            await saveChangesYes.waitForDisplayed({ timeout: 5000 })
+            await saveChangesYes.click()
+        } catch {
+            console.log("Dialog box didin't appear as no change was made. Probably...")
+        }
         const pricingButton = await this.getElementWithAttribute('id', 'pricing-button', 'div')
         await pricingButton.waitForDisplayed({ timeout: 30000 })
         await pricingButton.click()
@@ -237,7 +246,7 @@ class Application extends SalesForce {
         await pricingCard.waitForDisplayed({ timeout: 30000 })
         await pricingCard.click()
 
-        await (await this.getElementContainingExactText('Yes', 'span')).click()
+        await (await $("//span[text() = 'Do you confirm selection of the pricing offer?']/parent::div/..//span[text() = 'Yes']")).click()
         await (await this.getElementContainingExactText('Pricing option is selected successfully.')).waitForDisplayed({ timeout: 30000 })
 
         await this.forceReload()
