@@ -64,11 +64,9 @@ export default class SalesForce extends Page {
     dropDownElement: WebdriverIO.Element,
     optionText: string
   ): Promise<void> {
-    await this.jsClick(await dropDownElement)
+    await this.jsClick(dropDownElement)
     await browser.pause(500)
-    const dropDownOption = await $(
-      `//lightning-base-combobox-item//span[@title = '${optionText}']`
-    )
+    const dropDownOption = await $(`//lightning-base-combobox-item[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '${optionText.toLowerCase()}')]`)
     await dropDownOption.click()
   }
 

@@ -41,7 +41,42 @@ class Opportunities extends SalesForce {
     await (await this.getElementContainingExactText(`${name}-`, 'lightning-formatted-text')).waitForDisplayed();
   }
 
-  async modifyNecessaryDetails(amount = '80000', termDuration = '12'): Promise<void> {
+  private getLoanType(loanType: string) {
+    switch (loanType) {
+      case 'ULOC':
+        return 'Unsecured Line of Credit'
+      case 'CPL':
+        return 'Commercial'
+      case 'BEL':
+        return 'Business Equipment Loan'
+    }
+    return 'Business Equipment Loan'
+  }
+
+  private resolveLoanUse(loanUse: string): string {
+    switch (loanUse) {
+      case "Business use":
+      case "Business Use":
+        return "Business use"
+      case "Personal use":
+      case "Personal Use":
+      case "Personal use (NCCC)":
+        return "Personal use (NCCC)"
+      default:
+        console.log(`Invalid Loan Purpose '${loanUse}' did not match any cases, if new add the case. \nUsing: 'Business use'`)
+    }
+    return "Business use"
+  }
+
+  async modifyNecessaryDetails(
+    {
+      loanType = 'BEL', 
+      amount = '80000', 
+      termDuration = '12', 
+      loanUse = 'Business use',
+      assetType = 'OO Residential property'
+    }
+  ): Promise<void> {
     await browser.pause(4000);
     await browser.refresh();
     await this.detailsTabButton.click();
@@ -60,11 +95,11 @@ class Opportunities extends SalesForce {
     await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).waitForDisplayed();
     await (await this.getElementWithAttribute('title', 'Niladri Acharya - RA', 'lightning-base-combobox-formatted-text')).click();
 
-    await this.dropDownSelectByText(await this.loanTypeDropdown, 'Business Equipment Loan');
-    await this.dropDownLazySelect(await this.assetTypeDropdown);
+    await this.dropDownSelectByText(await this.loanTypeDropdown, this.getLoanType(loanType));
+    await this.dropDownSelectByText(await this.assetTypeDropdown, assetType);
     await this.dropDownLazySelect(await this.clientTypeDropdown);
-    await this.dropDownLazySelect(await this.transactionTypeDropdown);
-    await this.dropDownLazySelect(await this.loanUseDropdown);
+    await this.dropDownSelectByText(await this.transactionTypeDropdown, 'Refinance');
+    await this.dropDownSelectByText(await this.loanUseDropdown, this.resolveLoanUse(loanUse))
     await this.dropDownLazySelect(await this.lenderDropdown);
 
     await this.saveEditButton.click();

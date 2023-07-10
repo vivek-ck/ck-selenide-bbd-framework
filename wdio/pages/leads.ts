@@ -16,7 +16,7 @@ class LeadsPage extends SalesForce {
     get employmentStatusDropdown() { return $("//button[@aria-label='Employment Status, --None--']") }
     get professionDropdown() { return $("//button[@aria-label='Profession, --None--']") }
     get aphraNumberField() { return $("//input[@name='Aphra_Number__c']") }
-    get pardotCommentsField() { return $("//label[contains(text(), 'Pardot Comments')]/following-sibling::div/textarea") }
+    get pardotCommentsField() { return $("//label[contains(text(), 'Account Engagement Comments')]/following-sibling::div/textarea") }
     get saveEditButton() { return $("//button[@name='SaveEdit']") }
     get markAsCurrentStatusButton() { return $("//span[contains(text(), 'Mark as Current Status')]") }
     get markStatusAsCompleteButton() { return $("//span[contains(text(), 'Mark Status as Complete')]") }
